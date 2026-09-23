@@ -63,13 +63,14 @@ function p = params()
     p.geom.Lcell = sum(p.geom.layerThickness);
     p.geom.Lmea  = p.geom.Lcell;
 
-    % Additional stack geometry from Attachment 1.
-    p.geom.LendPlate = 10e-3;   % End-plate thickness [m]
-    p.geom.LaBP      = 2e-3;    % Anode bipolar-plate thickness [m]
-    p.geom.LcBP      = 2e-3;    % Cathode bipolar-plate thickness [m]
+    % 导热距离未必如此，这里先注释
+    % % Additional stack geometry from Attachment 1.
+    % p.geom.LendPlate = 10e-3;   % End-plate thickness [m]
+    % p.geom.LaBP      = 2e-3;    % Anode bipolar-plate thickness [m]
+    % p.geom.LcBP      = 2e-3;    % Cathode bipolar-plate thickness [m]
 
-    % Thermal thickness when both bipolar plates are represented explicitly.
-    p.geom.Lthermal = p.geom.LaBP + p.geom.Lmea + p.geom.LcBP;
+    % % Thermal thickness when both bipolar plates are represented explicitly.
+    % p.geom.Lthermal = p.geom.LaBP + p.geom.Lmea + p.geom.LcBP;
 
     % Cell active area from Attachment 1.
     p.geom.Acell = 25e-4;       % 25 cm^2 -> [m^2]
@@ -92,6 +93,7 @@ function p = params()
     p.trans.epsExp = 1.5;       % porosity exponent
     
     % Operating pressure from Attachment 1.
+    % 这里实际上附件 1 只给出一个统一的压力值101325，未分别给出阳极、阴极
     p.bc.pAnode   = 101325;      % [Pa]
     p.bc.pCathode = 101325;      % [Pa]
 
@@ -213,10 +215,11 @@ function p = params()
     p.echem.concentrationFactorEnd = 10;
     p.echem.concentrationFactorMiddle = 1;
 
-    % Equivalent cathode diffusion distance. For the cell-centered cCL
-    % concentration, use the distance from the cathode boundary to the cCL
-    % representative center: cGDL thickness + half cCL thickness.
-    p.echem.Ldiff = p.geom.LcGDL + 0.5*p.geom.LcCL; % [m]
+    % 材料不存在这个公式，Ldiff这个变量不知道是什么
+    % % Equivalent cathode diffusion distance. For the cell-centered cCL
+    % % concentration, use the distance from the cathode boundary to the cCL
+    % % representative center: cGDL thickness + half cCL thickness.
+    % p.echem.Ldiff = p.geom.LcGDL + 0.5*p.geom.LcCL; % [m]
     
     
     %% ========================================================================
@@ -302,7 +305,7 @@ function p = params()
     %
     % PEM is non-porous for this simplified treatment.
     %
-    
+    % 附件 1 没有给膜的孔隙率，这里给了0
     p.mat.eps0 = [ ...
         0.8,    ...     % aGDL
         0.3916, ...     % aCL
