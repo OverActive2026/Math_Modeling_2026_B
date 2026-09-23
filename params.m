@@ -1,64 +1,51 @@
-%Suwren  检查于9.23 15：34
-function p = params()
-%PARAMS  一维 PEMFC 冷启动模型的参数集合
-%
-%   p = params()
-%
-%   参数分组说明
-%   ----------------
-%   p.const   : 通用物理常数
-%   p.geom    : 几何参数
-%   p.trans   : 气体传输参数
-%   p.echem   : 电化学参数
-%   p.thermal : 热相关参数
-%   p.water   : 水 / 膜参数
-%   p.ice     : 冷启动结冰模型参数
-%   p.mat     : 各层材料物性
-%   p.bc      : 边界条件参数
-%
-%   题面与附件 1 中明确给出的数值均已填入。NaN 表示仍需建模选择或标定
-%   的参数，这些参数列在 p.meta.toBeCalibrated 中。
-%
-%   所有内部计算均采用国际单位制（SI）。
+%--------------------------------------------------------------%
+% @function: 根据附件一与题目正文相关信息计算所需使用的常数
+% @author:   PJ, GPT
+% @reviewer: Suwren 20260923 15:34
+% @date:     20260923
+% @input:
+% @output:   p->常系数列表
+%--------------------------------------------------------------%
 
-    %% ========================================================================
-    %  1. 通用物理常数
-    % ========================================================================
-    
-    p.const.R = 8.314;          % 通用气体常数 [J/(mol K)]
+function p = params()
+
+    %%  常系数列表结构
+    %  -----------------------
+    %  p.const   : 物理约束系数
+    %  p.geom    : 几何系数
+    %  p.trans   : 气/液系数
+    %  p.echem   : 电化学系数
+    %  p.thermal : 热系数
+    %  p.water   : 水/膜系数
+    %  p.ice     : 冰系数
+    %  p.mat     : 材料性质定义
+    %  p.bc      : 边界条件定义
+    %  -----------------------
+
+    %% 全局物理常数
+    p.const.R = 8.314;          % 通用物理常数 [J/(mol K)]
     p.const.F = 96485;          % 法拉第常数 [C/mol]
     
     p.const.Mw = 0.018;         % 水的摩尔质量 [kg/mol]
-    p.const.MH2 = 2.016e-3;     % 氢气的摩尔质量 [kg/mol]
-    p.const.MO2 = 31.998e-3;    % 氧气的摩尔质量 [kg/mol]
-    p.const.MN2 = 28.014e-3;    % 氮气的摩尔质量 [kg/mol]
+    p.const.MH2 = 2.016e-3;     % 氢气 [kg/mol]
+    p.const.MO2 = 31.998e-3;    % 氧气 [kg/mol]
+    p.const.MN2 = 28.014e-3;    % 氮气 [kg/mol]
     
-    p.const.p0   = 101325;      % 参考压力 [Pa]
+    p.const.p0   = 101325;      % 参考气体压力 [Pa]
     p.const.Tref = 298.15;      % 参考温度 [K]
-    p.const.Tf   = 273.15;      % 水的凝固点温度 [K]
+    p.const.Tf   = 273.15;      % 水的冻结温度 [K]
     
     
-    %% ========================================================================
-    %  2. 电池几何参数
-    % ========================================================================
-    %
-    % 沿厚度方向的排列顺序：
-    %
-    %       aGDL | aCL | PEM | cCL | cGDL
-    %
-    
+    %% 电池单元几何参数
+    % 各层几何参数
+    % 求解区域排列顺序: aGDL | aCL | PEM | cCL | cGDL
     p.geom.LaGDL = 150e-6;      % [m]
     p.geom.LaCL  = 3.4e-6;      % [m]
     p.geom.Lpem  = 12e-6;       % [m]
     p.geom.LcCL  = 11.3e-6;     % [m]
     p.geom.LcGDL = 150e-6;      % [m]
     
-    p.geom.layerThickness = [ ...
-        p.geom.LaGDL, ...
-        p.geom.LaCL, ...
-        p.geom.Lpem, ...
-        p.geom.LcCL, ...
-        p.geom.LcGDL ];
+    p.geom.layerThickness = [p.geom.LaGDL, p.geom.LaCL, p.geom.Lpem, p.geom.LcCL, p.geom.LcGDL];
     
     p.geom.Lcell = sum(p.geom.layerThickness);
     p.geom.Lmea  = p.geom.Lcell;
