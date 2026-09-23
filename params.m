@@ -1,48 +1,48 @@
+%Suwren  检查于9.23 15：34
 function p = params()
-%PARAMS  Parameters for the 1-D PEMFC cold-start model
+%PARAMS  一维 PEMFC 冷启动模型的参数集合
 %
 %   p = params()
 %
-%   Parameter policy
+%   参数分组说明
 %   ----------------
-%   p.const   : physical constants
-%   p.geom    : geometry
-%   p.trans   : gas / water transport parameters
-%   p.echem   : electrochemical parameters
-%   p.thermal : thermal parameters
-%   p.water   : water / membrane parameters
-%   p.ice     : cold-start ice model parameters
-%   p.mat     : layer material properties
-%   p.bc      : boundary-condition parameters
+%   p.const   : 通用物理常数
+%   p.geom    : 几何参数
+%   p.trans   : 气体传输参数
+%   p.echem   : 电化学参数
+%   p.thermal : 热相关参数
+%   p.water   : 水 / 膜参数
+%   p.ice     : 冷启动结冰模型参数
+%   p.mat     : 各层材料物性
+%   p.bc      : 边界条件参数
 %
-%   Values explicitly given in the problem statement and Attachment 1 are
-%   filled in. NaN is reserved for parameters that still require model
-%   selection or calibration; these are listed in p.meta.toBeCalibrated.
+%   题面与附件 1 中明确给出的数值均已填入。NaN 表示仍需建模选择或标定
+%   的参数，这些参数列在 p.meta.toBeCalibrated 中。
 %
-%   All internal calculations use SI units.
+%   所有内部计算均采用国际单位制（SI）。
 
     %% ========================================================================
-    %  1. Universal physical constants
+    %  1. 通用物理常数
     % ========================================================================
     
-    p.const.R = 8.314;          % Universal gas constant [J/(mol K)]
-    p.const.F = 96485;          % Faraday constant [C/mol]
+    p.const.R = 8.314;          % 通用气体常数 [J/(mol K)]
+    p.const.F = 96485;          % 法拉第常数 [C/mol]
     
-    p.const.Mw = 0.018;         % Molar mass of water [kg/mol]
-    p.const.MH2 = 2.016e-3;     % Molar mass of hydrogen [kg/mol]
-    p.const.MO2 = 31.998e-3;    % Molar mass of oxygen [kg/mol]
-    p.const.MN2 = 28.014e-3;    % Molar mass of nitrogen [kg/mol]
+    p.const.Mw = 0.018;         % 水的摩尔质量 [kg/mol]
+    p.const.MH2 = 2.016e-3;     % 氢气的摩尔质量 [kg/mol]
+    p.const.MO2 = 31.998e-3;    % 氧气的摩尔质量 [kg/mol]
+    p.const.MN2 = 28.014e-3;    % 氮气的摩尔质量 [kg/mol]
     
-    p.const.p0   = 101325;      % Reference pressure [Pa]
-    p.const.Tref = 298.15;      % Reference temperature [K]
-    p.const.Tf   = 273.15;      % Freezing temperature of water [K]
+    p.const.p0   = 101325;      % 参考压力 [Pa]
+    p.const.Tref = 298.15;      % 参考温度 [K]
+    p.const.Tf   = 273.15;      % 水的凝固点温度 [K]
     
     
     %% ========================================================================
-    %  2. Cell geometry
+    %  2. 电池几何参数
     % ========================================================================
     %
-    % Through-plane sequence:
+    % 沿厚度方向的排列顺序：
     %
     %       aGDL | aCL | PEM | cCL | cGDL
     %
@@ -64,42 +64,41 @@ function p = params()
     p.geom.Lmea  = p.geom.Lcell;
 
     % 导热距离未必如此，这里先注释
-    % % Additional stack geometry from Attachment 1.
-    % p.geom.LendPlate = 10e-3;   % End-plate thickness [m]
-    % p.geom.LaBP      = 2e-3;    % Anode bipolar-plate thickness [m]
-    % p.geom.LcBP      = 2e-3;    % Cathode bipolar-plate thickness [m]
+    % % 附件 1 给出的其余电堆几何参数。
+    % p.geom.LendPlate = 10e-3;   % 端板厚度 [m]
+    % p.geom.LaBP      = 2e-3;    % 阳极双极板厚度 [m]
+    % p.geom.LcBP      = 2e-3;    % 阴极双极板厚度 [m]
 
-    % % Thermal thickness when both bipolar plates are represented explicitly.
+    % % 当两侧双极板均显式建模时的热传导总厚度。
     % p.geom.Lthermal = p.geom.LaBP + p.geom.Lmea + p.geom.LcBP;
 
-    % Cell active area from Attachment 1.
+    % 电池活化面积，来自附件 1。
     p.geom.Acell = 25e-4;       % 25 cm^2 -> [m^2]
     
     
     %% ========================================================================
-    %  3. Gas transport
+    %  3. 气体传输
     % ========================================================================
     %
-    % Problem statement:
+    % 题面给出的有效扩散系数：
     %
     % D_k,eff =
     %   D_k,ref * (T/298.15)^1.75 * (101325/p) * eps_g^1.5
     %
     
-    p.trans.DH2_ref = 1.10e-4;  % H2 reference diffusivity [m^2/s]
-    p.trans.DO2_ref = 2.20e-5;  % O2 reference diffusivity [m^2/s]
+    p.trans.DH2_ref = 1.10e-4;  % H2 参考扩散系数 [m^2/s]
+    p.trans.DO2_ref = 2.20e-5;  % O2 参考扩散系数 [m^2/s]
     
-    p.trans.Texp = 1.75;        % temperature exponent
-    p.trans.epsExp = 1.5;       % porosity exponent
+    p.trans.Texp = 1.75;        % 温度指数
+    p.trans.epsExp = 1.5;       % 孔隙率指数
     
-    % Operating pressure from Attachment 1.
+    % 操作压力，来自附件 1。
     % 这里实际上附件 1 只给出一个统一的压力值101325，未分别给出阳极、阴极
     p.bc.pAnode   = 101325;      % [Pa]
     p.bc.pCathode = 101325;      % [Pa]
 
-    % Attachment 1 supplies mass fractions. Store them explicitly, then
-    % convert to mole fractions for c = y*p/(R*T). Do not use wO2=0.233 as
-    % an oxygen mole fraction.
+    % 附件 1 给出的是质量分数，此处先按原值保存，再换算为摩尔分数，
+    % 以供 c = y*p/(R*T) 使用。不要把 wO2=0.233 当作氧气摩尔分数。
     p.bc.wH2 = 1.0;
     p.bc.wO2 = 0.233;
     p.bc.wN2 = 0.767;
@@ -113,21 +112,20 @@ function p = params()
     
     
     %% ========================================================================
-    %  4. Water transport
+    %  4. 水传输
     % ========================================================================
     
-    % Reference diffusivity of water in porous media
+    % 多孔介质中水的参考扩散系数
     p.water.Dw_ref_anode   = 8.69e-5;  % aGDL / aCL [m^2/s]
     p.water.Dw_ref_cathode = 2.48e-5;  % cGDL / cCL [m^2/s]
     
-    % Electro-osmotic drag:
+    % 电渗拖拽（electro-osmotic drag）：
     %
     %       nd = 2.5 * lambda / 22
     %
     p.water.ndCoeff = 2.5 / 22;
     
-    % Membrane-water diffusion relation is explicitly specified by the
-    % problem and will be implemented in calc_Dwater.m:
+    % 膜内水扩散系数由题目明确给出，将在 calc_Dwater.m 中实现：
     %
     % Dw_mem =
     % 1e-10 * exp[2416(1/303.15 - 1/T)] *
@@ -141,22 +139,21 @@ function p = params()
         0.0264, ...
        -0.000671 ];
     
-    % Membrane equivalent weight and density from Attachment 1:
-    % required by
+    % 膜当量质量与膜密度来自附件 1，用于下式：
     %
     % lambda = EW * mw / (rho_pem * Mw)
     %
     % 1000 g/mol = 1 kg/mol.
     p.water.EW      = 1.0;       % [kg/mol]
     p.water.rho_pem = 2150;      % [kg/m^3]
-    p.water.lambda0 = 3.0;       % Initial membrane water content [-]
+    p.water.lambda0 = 3.0;       % 初始膜含水量 [-]
     p.water.clIonomerVolumeFraction = 0.3;
 
-    % Initial membrane water mass concentration derived from Eq. (21).
+    % 由式 (21) 推导出的初始膜内水质量浓度。
     p.water.mwMembrane0 = p.water.lambda0 * p.water.rho_pem * ...
         p.const.Mw / p.water.EW; % [kg/m^3]
 
-    % Porous-media inputs retained for the later liquid-water model.
+    % 多孔介质参数，保留给后续的液态水模型使用。
     p.porous.contactAngleGDL_deg = 110;
     p.porous.contactAngleCL_deg  = 100;
     p.porous.contactAngleGDL = 110*pi/180; % [rad]
@@ -164,9 +161,9 @@ function p = params()
     p.porous.permeabilityGDL = 6.2e-12;    % [m^2]
     p.porous.permeabilityCL  = 6.2e-13;    % [m^2]
 
-    % Phase-change / transfer coefficients supplied as dimensionless model
-    % coefficients. Directional ordering is not specified in Attachment 1,
-    % so paired values are kept together rather than assigned by guesswork.
+    % 相变 / 相间转化系数，题目以无量纲模型系数的形式给出。
+    % 附件 1 未说明成对数值的方向顺序，因此成对数值保持原样存放，
+    % 不做方向上的猜测性分配。
     p.water.phase.memVaporCoeff  = [0.001, 1.0];
     p.water.phase.memLiquidCoeff = 0.5;
     p.water.phase.memIceCoeff    = 1.0;
@@ -175,22 +172,22 @@ function p = params()
     
     
     %% ========================================================================
-    %  5. Electrochemistry
+    %  5. 电化学参数
     % ========================================================================
     
-    p.echem.alpha = 0.5;          % charge-transfer coefficient
+    p.echem.alpha = 0.5;          % 电荷转移系数
 
-    p.echem.Voc0 = 0.95;          % Initial open-circuit voltage [V]
+    p.echem.Voc0 = 0.95;          % 初始开路电压 [V]
     
-    % Initial calibration value specified in the statement
+    % 题面给出的初始校准值
     p.echem.j0_ref = 0.01;        % [A/m^2]
     
-    p.echem.Ea = 67000;           % activation energy [J/mol]
+    p.echem.Ea = 67000;           % 活化能 [J/mol]
     
-    % Thermoneutral voltage
+    % 热中性电压
     p.echem.Eth = 1.48;           % [V]
     
-    % Reversible-voltage constants:
+    % 可逆电压常数：
     %
     % Erev =
     % 1.229 - 8.5e-4*(T-298.15)
@@ -199,50 +196,49 @@ function p = params()
     p.echem.Erev_ref = 1.229;     % [V]
     p.echem.dEdT     = -8.5e-4;   % [V/K]
     
-    % Area-specific contact resistance
+    % 单位面积接触电阻
     %
-    % Problem statement:
+    % 题面给出：
     %       Rc = 0.01 ohm cm^2
     %
-    % Convert:
+    % 单位换算：
     %       1 cm^2 = 1e-4 m^2
     %
     p.echem.Rc = 0.01e-4;         % [ohm m^2]
     
-    % Ice coverage exponent and stack concentration-polarization factors
-    % from Attachment 1. They are inactive in the no-ice single-cell MVP.
+    % 冰覆盖指数与电堆浓差极化系数，来自附件 1。
+    % 在无冰的单电池最小可用版本中暂不生效。
     p.echem.gammaIceArea = 3.5;
     p.echem.concentrationFactorEnd = 10;
     p.echem.concentrationFactorMiddle = 1;
 
     % 材料不存在这个公式，Ldiff这个变量不知道是什么
-    % % Equivalent cathode diffusion distance. For the cell-centered cCL
-    % % concentration, use the distance from the cathode boundary to the cCL
-    % % representative center: cGDL thickness + half cCL thickness.
+    % % 阴极等效扩散距离。针对采用单元中心值的 cCL 浓度，取阴极边界到 cCL
+    % % 代表性中心的距离：阴极 GDL 厚度 + 阴极 CL 厚度的一半。
     % p.echem.Ldiff = p.geom.LcGDL + 0.5*p.geom.LcCL; % [m]
     
     
     %% ========================================================================
-    %  6. Thermal parameters
+    %  6. 热参数
     % ========================================================================
     
-    % Convective heat-transfer coefficient
+    % 对流换热系数
     p.thermal.h = 40;             % [W/(m^2 K)]
     
-    % Material properties from Attachment 1.
+    % 材料物性，来自附件 1。
     %
-    % order:
+    % 排列顺序：
     %       [aGDL, aCL, PEM, cCL, cGDL]
     %
-    % rho : density         [kg/m^3]
-    % cp  : heat capacity   [J/(kg K)]
-    % k   : conductivity    [W/(m K)]
+    % rho : 密度         [kg/m^3]
+    % cp  : 比热容       [J/(kg K)]
+    % k   : 导热系数     [W/(m K)]
     
     p.mat.rho = [185, 970, 2150, 970, 185];
     p.mat.cp  = [545, 240, 1050, 240, 545];
     p.mat.k   = [0.3, 0.27, 0.24, 0.27, 0.3];
 
-    % Properties not mapped directly onto the five-layer transport grid.
+    % 未直接映射到五层传输网格上的部件物性。
     p.mat.GDL.rho = 185;          % [kg/m^3]
     p.mat.GDL.cp = 545;           % [J/(kg K)]
     p.mat.GDL.k = 0.3;            % [W/(m K)]
@@ -294,16 +290,16 @@ function p = params()
     
     
     %% ========================================================================
-    %  7. Dry porosity of porous layers
+    %  7. 多孔层的干孔隙率
     % ========================================================================
     %
-    % eps0 is needed by:
+    % eps0 用于下式：
     %
     %       eps_g = eps0 - eps_l - eps_ice
     %
-    % and hence by gas/water effective diffusivities.
+    % 进而影响气体 / 水的有效扩散系数。
     %
-    % PEM is non-porous for this simplified treatment.
+    % 在本简化处理中，质子交换膜按无孔隙对待。
     %
     % 附件 1 没有给膜的孔隙率，这里给了0
     p.mat.eps0 = [ ...
@@ -315,41 +311,40 @@ function p = params()
     
     
     %% ========================================================================
-    %  8. Ice / cold-start model
+    %  8. 结冰 / 冷启动模型
     % ========================================================================
     %
-    % These are NOT prescribed by the baseline model.
-    % They belong to our cold-start extension and should eventually be
-    % calibrated against the -20 C / -25 C experimental data.
+    % 这些不属于常温基线模型的内容！！！
+    % 而是我们自行增加的冷启动扩展，最终需要用 -20 ℃ / -25 ℃ 实验数据标定。
     %
     
-    % Densities, latent heat and active-area exponent from Attachment 1.
+    % 密度、潜热与活性面积指数来自附件 1。
     p.ice.rho_liquid = p.phase.liquid.rho; % [kg/m^3]
     p.ice.rho_ice    = p.phase.ice.rho;    % [kg/m^3]
     p.ice.Lfusion    = p.thermal.Lfusion;  % [J/kg]
     
-    % Initial proposed kinetic law:
+    % 初步提出的动力学规律：
     %
     % rFreeze = kFreeze * ml * max(Tf - T,0)
     % rMelt   = kMelt   * mi * max(T - Tf,0)
     %
-    % These are model parameters, NOT given by the problem.
+    % 这两个是模型参数，题目并未给出。
     
-    p.ice.kFreeze = NaN;          % calibration parameter
-    p.ice.kMelt   = NaN;          % calibration parameter
+    p.ice.kFreeze = NaN;          % 待标定参数
+    p.ice.kMelt   = NaN;          % 待标定参数
     
-    % Ice-blockage effect on electrochemically active area:
+    % 冰堵对电化学有效反应面积的影响：
     %
     %       a_eff = (1 - sIce)^gammaArea
     %
     p.ice.gammaArea = p.echem.gammaIceArea;
     
-    % Numerical lower bound for remaining gas porosity.
-    % This is a numerical safeguard, not a physical parameter.
+    % 剩余气相孔隙率的数值下限。
+    % 这属于数值保护措施，不是物理参数。
     p.num.epsMin = 1e-8;
     p.num.residualTol = 1e-6;
 
-    % Initial and ambient conditions from Attachment 1.
+    % 初始条件与环境温度，来自附件 1。
     p.ic.T0 = 253.15;             % [K]
     p.bc.Tamb = 253.15;           % [K]
     p.ic.liquidWater = 0.0;
@@ -357,15 +352,15 @@ function p = params()
     
     
     %% ========================================================================
-    %  9. Membrane conductivity correlation
+    %  9. 膜电导率关联式
     % ========================================================================
     %
     % kappa_pem =
     % (0.5139 lambda - 0.326) *
     % exp[1268(1/303.15 - 1/T)]
     %
-    % No fitted parameter is required, but coefficients are stored here
-    % instead of hard-coded in the voltage function.
+    % 该式无需拟合参数，但系数统一存放在此处，
+    % 避免在电压计算函数中硬编码。
     
     p.water.kappa_a0 = 0.5139;
     p.water.kappa_a1 = -0.326;
@@ -373,10 +368,10 @@ function p = params()
     
     
     %% ========================================================================
-    %  10. Buck saturation-pressure correlation
+    %  10. Buck 饱和蒸汽压关联式
     % ========================================================================
     %
-    % Tc = T - 273.15 [degC]
+    % Tc = T - 273.15 [摄氏度]
     %
     % Tc >= 0:
     % psat = 611.21 exp[(18.678 - Tc/234.5)*Tc/(257.14 + Tc)]
@@ -394,47 +389,5 @@ function p = params()
     p.water.Buck.neg.B1 = 23.036;
     p.water.Buck.neg.B2 = 333.7;
     p.water.Buck.neg.B3 = 279.82;
-    
-    
-    %% ========================================================================
-    %  11. Current constraints used later in Q2
-    % ========================================================================
-    %
-    % Keep these here although Q1 does not need the limits.
-    
-    p.limit.jMax_Acm2 = 0.5;          % [A/cm^2]
-    p.limit.jMax      = 0.5 * 1e4;    % [A/m^2]
-    
-    p.limit.qChargeMax_Acm2 = 20;     % [C/cm^2]
-    p.limit.qChargeMax      = 20*1e4; % [C/m^2]
-    
-    
-    %% ========================================================================
-    %  12. Auxiliary-heater constraint used later in Q3 / Q4
-    % ========================================================================
-    
-    p.limit.qAuxMax_Wcm2 = 1;         % [W/cm^2]
-    p.limit.qAuxMax      = 1e4;       % [W/m^2]
-    
-    
-    %% ========================================================================
-    %  13. Parameter status bookkeeping
-    % ========================================================================
-    %
-    % Useful during development: immediately know what has not yet been
-    % populated from Attachment 1 / literature.
-    
-    p.meta.missingFromAttachment1 = {};
-
-    p.meta.toBeCalibrated = { ...
-        'echem.j0_ref', ...
-        'ice.kFreeze', ...
-        'ice.kMelt' ...
-        };
-
-    p.meta.derivedAssumptions = { ...
-        'bc.yO2 and bc.yN2 are converted from attachment mass fractions', ...
-        'echem.Ldiff = LcGDL + 0.5*LcCL for a cell-centered cCL value' ...
-        };
     
 end
