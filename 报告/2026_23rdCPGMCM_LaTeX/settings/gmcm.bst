@@ -6,6 +6,7 @@ ENTRY
     howpublished
     institution
     journal
+    language
     note
     number
     organization
@@ -22,7 +23,25 @@ ENTRY
   {}
 
 INTEGERS { nameptr numnames totalentries }
-STRINGS { names result item }
+STRINGS { names result item sep colon period etal }
+
+FUNCTION {is.english}
+{ language empty$
+    { #0 }
+    { language "en" =
+        { #1 }
+        { language "english" = }
+      if$
+    }
+  if$
+}
+
+FUNCTION {set.punctuation}
+{ is.english
+    { ", " 'sep :=  ": " 'colon :=  "." 'period :=  "et al." 'etal := }
+    { "，" 'sep :=  "：" 'colon :=  "。" 'period :=  "等" 'etal := }
+  if$
+}
 
 FUNCTION {field.or.empty}
 { duplicate$ empty$ { pop$ "" } 'skip$ if$ }
@@ -33,7 +52,7 @@ FUNCTION {append}
     'skip$
     { result empty$
         { item 'result := }
-        { result "，" * item * 'result := }
+        { result sep * item * 'result := }
       if$
     }
   if$
@@ -47,11 +66,11 @@ FUNCTION {format.names}
   { nameptr numnames #1 + < }
   { names nameptr "{ff~}{vv~}{ll}{, jj}" format.name$ 'item :=
     item "others" =
-      { "等" 'item := }
+      { etal 'item := }
       'skip$
     if$
     nameptr #1 >
-      { "，" * }
+      { sep * }
       'skip$
     if$
     item *
@@ -78,6 +97,7 @@ FUNCTION {start.entry}
   "}" write$
   newline$
   "" 'result :=
+  set.punctuation
   format.author append
   title field.or.empty append
   title empty$ { "Missing title in " cite$ * warning$ } 'skip$ if$
@@ -85,7 +105,7 @@ FUNCTION {start.entry}
 
 FUNCTION {finish.entry}
 { note field.or.empty append
-  result "。" * write$
+  result period * write$
   newline$
 }
 
@@ -95,7 +115,7 @@ FUNCTION {format.imprint}
     'skip$
     { duplicate$ empty$
         { pop$ publisher }
-        { "：" * publisher * }
+        { colon * publisher * }
       if$
     }
   if$
@@ -111,7 +131,7 @@ FUNCTION {format.volume.pages}
     'skip$
     { duplicate$ empty$
         { pop$ pages }
-        { "：" * pages * }
+        { colon * pages * }
       if$
     }
   if$
@@ -132,7 +152,15 @@ FUNCTION {format.access}
       if$
       ""
     }
-    { "访问时间：" urldate * }
+    { language empty$
+        { "访问时间：" urldate * }
+        { language "en" = language "english" = or
+            { "Accessed: " urldate * }
+            { "访问时间：" urldate * }
+          if$
+        }
+      if$
+    }
   if$
 }
 

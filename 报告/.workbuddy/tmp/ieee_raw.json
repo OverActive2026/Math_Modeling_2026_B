@@ -1,0 +1,2640 @@
+{
+ "\"PEM fuel cell\" cold start modeling": [
+  {
+   "doi": "10.1109/TTE.2025.3526184",
+   "title": "Anodic Cold Start Control of PEM Fuel Cell System With Temperature-Dependent Solenoid Valve Model",
+   "publisher": "IEEE",
+   "issue": "3",
+   "issn": "2372-2088",
+   "rank": 1,
+   "volume": "11",
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/824682668614987",
+      "id": 824682668614987,
+      "full_name": "Ruoyang Song",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37086053689",
+      "id": 37086053689,
+      "full_name": "Zhongbao Wei",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "National Center of Technology Innovation for Fuel Cell, Weichai Power Company Ltd., Weifang, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37088939824",
+      "id": 37088939824,
+      "full_name": "Fengwen Pan",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Center of Technology Innovation for Fuel Cell, Weichai Power Company Ltd., Weifang, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Mechanical and Vehicle Engineering, Chongqing University, Chongqing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087239387",
+      "id": 37087239387,
+      "full_name": "Caizhi Zhang",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Mechanical and Vehicle Engineering, Chongqing University, Chongqing, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Journals",
+   "abstract": "Precise supply control is one of the most critical challenges for proton exchange membrane (PEM) fuel cell (FC) system to implement rapid cold start. Focusing on the low-temperature adaptability, this article proposed a model-based control framework for PEM FC hydrogen system. First, the challenge in anodic cold start control is revealed and summarized through cold start experiments. According to the investigated phenomenon, the solenoid valve model is established with the distinguished characteristic of temperature dependent. It contains three subsystems, namely, the electromagnetic, mechanical, and fluid subsystems, which couples the temperature variable with the electromagnetic part and finally affects the controlled pressure. To copy with this challenge, a model-based feedforward term is incorporated in control framework based on the established model. Moreover, the proposed model-based framework is validated under different strategies, temperatures, and controllers. The resultant model has high accuracy with the error of 3.84%, and the proposed control framework suppresses the pressure overshoot with a 16.75% improvement. The satisfactory results illustrate the effectiveness of the model-based approach in anode control to enhance the cold start capability and durability.",
+   "article_number": "10829628",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10829628",
+   "html_url": "https://ieeexplore.ieee.org/document/10829628/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10829628/",
+   "publication_title": "IEEE Transactions on Transportation Electrification",
+   "publication_number": 6687316,
+   "is_number": 11008803,
+   "publication_year": 2025,
+   "publication_date": "June 2025",
+   "start_page": "7300",
+   "end_page": "7308",
+   "citing_paper_count": 2,
+   "citing_patent_count": 0,
+   "download_count": 333,
+   "insert_date": "20250106",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Valves",
+      "Solenoids",
+      "Hydrogen",
+      "Anodes",
+      "Fuel cells",
+      "Temperature",
+      "Temperature dependence",
+      "Atmospheric modeling",
+      "Fluids",
+      "Electromagnetics"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Anode pressure control",
+      "cold start",
+      "proton exchange membrane (PEM) fuel cell (FC) system",
+      "susceptible components"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control System",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Solenoid Valve",
+      "Cold Start",
+      "Temperature-dependent Model",
+      "Fuel Cell System",
+      "Precise Control",
+      "Model-based Control",
+      "Model-based Framework",
+      "Linear Model",
+      "Linear Regression Model",
+      "Control Variables",
+      "Control Strategy",
+      "Control Scheme",
+      "Pulse Width",
+      "Pulsewidth Modulation",
+      "Pressure Control",
+      "Adaptive Control",
+      "Normal Temperature",
+      "Relative Permeability",
+      "Magnetic Permeability",
+      "Permeability Of Space",
+      "Magnetic Force",
+      "Lorentz Force",
+      "Magnetic Flux",
+      "Magnetic Flux Density",
+      "Hydrogen Pressure",
+      "Adaptive Capabilities",
+      "Electromagnetic Characteristics",
+      "Electromagnetic Features",
+      "Proportional-integral-derivative",
+      "Proportional-integral-derivative Controller",
+      "PID Controller",
+      "Temperature-dependent Characteristics",
+      "Temperature-dependent Features",
+      "Switching Valve",
+      "Feedback Term",
+      "Control Valve",
+      "Feedforward Control",
+      "Excessive Pressure"
+     ]
+    }
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ITEC-India59098.2023.10471450",
+   "title": "Scalable Multi-physics Simulation to Support PEM Fuel Cell System Development",
+   "publisher": "IEEE",
+   "isbn": "979-8-3503-3781-5",
+   "rank": 2,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087320027",
+      "id": 37087320027,
+      "full_name": "Reinhard Tatschl",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087231269",
+      "id": 37087231269,
+      "full_name": "Daniel Ritzberger",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/395715260617999",
+      "id": 395715260617999,
+      "full_name": "Christoph Pötsch",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL India Pvt. Ltd., Gurgaon, India",
+      "authorUrl": "https://ieeexplore.ieee.org/author/513657538170237",
+      "id": 513657538170237,
+      "full_name": "Vinay Kumar",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL India Pvt. Ltd., Gurgaon, India"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/464025225974188",
+      "id": 464025225974188,
+      "full_name": "Anton M. Reiter",
+      "author_order": 5,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Hydrogen powered fuel cell systems are a promising technology for future CO2 neutral vehicle propulsion. In the development of modern fuel cell systems for mobile applications, system simulation is used for a wide variety of tasks, ranging from concept layout to component design to virtual component integration and calibration. An efficient use of simulation requires scalable and consistent models, covering both the variety of application areas and the width of the modeling tasks related to cell, stack, system and vehicle. This article presents a holistic approach to PEM fuel cell system modelling as an enabler for the simulation-supported development of future mobility and transport solutions. The adopted multi-physical system simulation platform offers scalable modeling depth, applicable to fuel cell balance-of-plant development as well as virtual system integration and optimization. The detailed component models for stack and auxiliary units, such as humidifier, injector/ejector, air compressor and water separator, are based on the essential thermodynamic and electrochemical fundamentals. This approach ensures high accuracy and true extrapolation capabilities within the entire relevant system operation parameter space. Numerical robustness and fast solvers enable unconditional real-time capabilities as a prerequisite for efficient use in MiL, SiL and HiL environments. The applicability of the multi-physical simulation framework to fuel cell development related engineering challenges is demonstrated based on selected use-cases regarding humidifier sizing and compressor matching as well as cold-start strategy assessment, performance degradation analysis and control system development.",
+   "article_number": "10471450",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10471450",
+   "html_url": "https://ieeexplore.ieee.org/document/10471450/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10471450/",
+   "publication_title": "2023 IEEE International Transportation Electrification Conference (ITEC-India)",
+   "conference_location": "Chennai, India",
+   "conference_dates": "12-15 Dec. 2023",
+   "publication_number": 10471369,
+   "is_number": 10471370,
+   "publication_year": 2023,
+   "publication_date": "12-15 Dec. 2023",
+   "start_page": "1",
+   "end_page": "7",
+   "citing_paper_count": 1,
+   "citing_patent_count": 0,
+   "download_count": 72,
+   "insert_date": "20240325",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Thermodynamics",
+      "Atmospheric modeling",
+      "Systems operation",
+      "Fuel cells",
+      "Transportation",
+      "System integration",
+      "Robustness"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Model Based Design",
+      "Advanced Simulation",
+      "Fuel Cells",
+      "Electrification"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Multiphysics Simulation",
+      "Fuel Cell System",
+      "Electrochemical",
+      "Performance Parameters",
+      "Operating Parameters",
+      "Model Components",
+      "Simulation System",
+      "Use Of Simulation",
+      "Compressed Air",
+      "Simulation Platform",
+      "Water Separation",
+      "Cold Start",
+      "Applications In Various Areas",
+      "Variety Of Application Areas",
+      "Development Of Control Systems",
+      "Electrode",
+      "Water Content",
+      "System Performance",
+      "Efficient System",
+      "Gas Flow",
+      "Catalyst Layer",
+      "Stacking Model",
+      "Gas Diffusion Layer",
+      "Cell Voltage",
+      "Control Valve",
+      "Gas Stream",
+      "Chemical Degradation",
+      "Chemical Breakdown",
+      "Chemical Decomposition",
+      "Optimal Efficiency",
+      "External Heat",
+      "Local State",
+      "Local Status"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3503-3781-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3503-3780-8",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  }
+ ],
+ "fuel cell cold start ice formation": [
+  {
+   "doi": "10.1109/ICIT.2018.8352298",
+   "title": "Comparison of self cold start strategies of automotive Proton Exchange Membrane Fuel Cell",
+   "publisher": "IEEE",
+   "isbn": "978-1-5090-5950-8",
+   "rank": 1,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37085750411",
+      "id": 37085750411,
+      "full_name": "A. Amamou",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38269331400",
+      "id": 38269331400,
+      "full_name": "L. Boulon",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38513508100",
+      "id": 38513508100,
+      "full_name": "S. Kelouwani",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Universite du Quebec a Trois-Riviercs, Trois, Rivieres, Canada"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "This paper presents an experimental comparison between two self-cold start strategies of automotive Proton Exchange Membrane Fuel Cells. The compared strategies are the most commonly studied ones based on constant voltage and constant current modes, and they are the most effective regarding the energy consumption and system cost. Experimental results show that constant voltage strategy is more advantageous than the constant current strategy in terms of heating time and energy consumption. Nevertheless, constant voltage strategy does not adapt to the variation of operating conditions which creates a problem of repeatability.",
+   "article_number": "8352298",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=8352298",
+   "html_url": "https://ieeexplore.ieee.org/document/8352298/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/8352298/",
+   "publication_title": "2018 IEEE International Conference on Industrial Technology (ICIT)",
+   "conference_location": "Lyon, France",
+   "conference_dates": "20-22 Feb. 2018",
+   "publication_number": 8342303,
+   "is_number": 8352140,
+   "publication_year": 2018,
+   "publication_date": "20-22 Feb. 2018",
+   "start_page": "904",
+   "end_page": "908",
+   "citing_paper_count": 5,
+   "citing_patent_count": 0,
+   "download_count": 437,
+   "insert_date": "20180430",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Current density",
+      "Heating systems",
+      "Fuel cells",
+      "Hydrogen",
+      "Energy consumption",
+      "Degradation",
+      "Protons"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "cold start",
+      "Proton Exchange Membrane Fuel Cell",
+      "experimental approach",
+      "constant current",
+      "constant voltage"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Cold Start",
+      "Energy Consumption",
+      "Energy Expenditure",
+      "Constant Current",
+      "Constant-current",
+      "Voltage Mode",
+      "Energy Consumption Cost",
+      "Heat Consumption",
+      "Heating Energy Consumption",
+      "Temporal Evolution",
+      "Temporal Development",
+      "Energy Requirements",
+      "Heat Flux",
+      "Electrochemical Reaction",
+      "Voltage Values",
+      "High Current Density",
+      "Test Bench",
+      "Cell Voltage",
+      "Ice Formation",
+      "Increase In Current Density",
+      "Evolution Of Density",
+      "Hydrogen Pressure",
+      "Fan Speed",
+      "Purge Time",
+      "Cold-start Problem"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "978-1-5090-5950-8",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "USB ISBN",
+      "value": "978-1-5090-5948-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "978-1-5090-5949-2",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ACCESS.2016.2597058",
+   "title": "A Comprehensive Review of Solutions and Strategies for Cold Start of Automotive Proton Exchange Membrane Fuel Cells",
+   "publisher": "IEEE",
+   "issn": "2169-3536",
+   "rank": 2,
+   "volume": "4",
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37085750411",
+      "id": 37085750411,
+      "full_name": "Ali Akrem Amamou",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Institut de Recherche sur l’Hydrogène, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38513508100",
+      "id": 38513508100,
+      "full_name": "Sousso Kelouwani",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Institut de Recherche sur l’Hydrogène, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38269331400",
+      "id": 38269331400,
+      "full_name": "Loic Boulon",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37267442800",
+      "id": 37267442800,
+      "full_name": "Kodjo Agbossou",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Groupe de Recherche en Électronique Industrielle, Université du Québec à Trois-Rivières, Trois-Rivières, QC, Canada"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "OPEN_ACCESS",
+   "content_type": "Journals",
+   "abstract": "Proton exchange membrane fuel cell (PEMFC) can be a significant eco-friendly alternative power source for vehicles. However, under subfreezing conditions, cell degradation and irreversible performance decay can occur because of ice formation and repetitive thaw/freeze cycles. These problems have limited the further commercialization of PEMFC in cold weather countries. Thus, many improvements have been made to repair the freeze protection and rapid cold startup problems in PEMFC vehicles. In this paper, a comprehensive review dedicated to engineers of the recent research progress on the PEMFC cold start problems is presented. Systems and methods for fuel cell shutdown are summarized and classified into two categories: purge solution and material to avoid freezing. Regarding the system and solutions for PEMFC cold startup, different heating solutions are classified into two main groups depending on their heating sources and categorized as internal and external heating methods. This paper concludes with a detailed review of cold startup strategies based on an exhaustive survey of journal papers and patents.",
+   "article_number": "7529180",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7529180",
+   "html_url": "https://ieeexplore.ieee.org/document/7529180/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/7529180/",
+   "publication_title": "IEEE Access",
+   "publication_number": 6287639,
+   "is_number": 7419931,
+   "publication_year": 2016,
+   "publication_date": "2016",
+   "start_page": "4989",
+   "end_page": "5002",
+   "citing_paper_count": 140,
+   "citing_patent_count": 0,
+   "download_count": 6452,
+   "insert_date": "20160802",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Fuel cells",
+      "Heating",
+      "Protons",
+      "Degradation",
+      "Alternative power sources",
+      "Cold startup systems",
+      "Vehicles"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Cold start strategies",
+      "heating solutions",
+      "hybrid and electric vehicles",
+      "PEMFC",
+      "purge"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Review Of Strategies",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Cold Start",
+      "Heat Source",
+      "Paper Surveys",
+      "External Heat",
+      "Heating Method",
+      "Internal Heat",
+      "Ice Formation",
+      "Cold-start Problem",
+      "Catalytic Reaction",
+      "Heat Exchanger",
+      "Dewatering",
+      "Removal Of Water",
+      "Residual Water",
+      "Water Residues",
+      "Energy Management",
+      "Vacuum Drying",
+      "Department Of Energy",
+      "Cell Voltage",
+      "Gas Diffusion Layer",
+      "Purge Gas",
+      "Membrane Electrode Assembly",
+      "Start-up Time",
+      "Fuel Cell System",
+      "Fuel Cell Performance",
+      "Fuel Cell Operation",
+      "Oxygen Reduction Reaction",
+      "Gas Channel",
+      "Freezable Water",
+      "Freezing Temperature"
+     ]
+    }
+   },
+   "license": "OAPA"
+  },
+  {
+   "doi": "10.1109/ECCE58356.2025.11260083",
+   "title": "Startup Failure Detection Method for Hydrogen Recirculation Blower Under Cold Start Conditions",
+   "publisher": "IEEE",
+   "isbn": "979-8-3315-4131-6",
+   "issn": "2329-3721",
+   "rank": 3,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Department of Automotive Engineering (Automotive-Computer Convergence), Hanyang University, Seoul, South Korea",
+      "authorUrl": "https://ieeexplore.ieee.org/author/415177878077390",
+      "id": 415177878077390,
+      "full_name": "Neulpureunhaneul Lee",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Department of Automotive Engineering (Automotive-Computer Convergence), Hanyang University, Seoul, South Korea"
+       ]
+      }
+     },
+     {
+      "affiliation": "Department of Automotive Engineering (Automotive-Computer Convergence), Hanyang University, Seoul, South Korea",
+      "authorUrl": "https://ieeexplore.ieee.org/author/750178403019543",
+      "id": 750178403019543,
+      "full_name": "Eun-Sol Oh",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Department of Automotive Engineering (Automotive-Computer Convergence), Hanyang University, Seoul, South Korea"
+       ]
+      }
+     },
+     {
+      "affiliation": "Fuel Cell System Engineering Design Team 2, Hyundai Motor Company, Yongin, South Korea",
+      "authorUrl": "https://ieeexplore.ieee.org/author/684177550031946",
+      "id": 684177550031946,
+      "full_name": "Hyun-Jun Lee",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Fuel Cell System Engineering Design Team 2, Hyundai Motor Company, Yongin, South Korea"
+       ]
+      }
+     },
+     {
+      "affiliation": "Fuel Cell System Engineering Design Team 2, Hyundai Motor Company, Yongin, South Korea",
+      "authorUrl": "https://ieeexplore.ieee.org/author/831927958646293",
+      "id": 831927958646293,
+      "full_name": "Sung-Jin Yoo",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Fuel Cell System Engineering Design Team 2, Hyundai Motor Company, Yongin, South Korea"
+       ]
+      }
+     },
+     {
+      "affiliation": "Department of Automotive Engineering, Hanyang University, Seoul, South Korea",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37293520000",
+      "id": 37293520000,
+      "full_name": "Young-Doo Yoon",
+      "author_order": 5,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Department of Automotive Engineering, Hanyang University, Seoul, South Korea"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "This paper proposes a method to detect startup failure caused by ice formation on the motor in sensorless control systems. The sensorless control strategy adopted in this study estimates the rotor position by determining the initial rotor angle and initiates motor operation based on a model-based sensorless control scheme. However, under cold start conditions, startup failure may occur when the torque required to overcome the ice exceeds the maximum torque capability of the motor. Therefore, a startup failure detection mechanism is essential during the initial operation phase. This paper proposes a detection method for startup failure, which is based on the error ratio between electrical energy and mechanical energy. The effectiveness of the proposed method is experimentally validated.",
+   "article_number": "11260083",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11260083",
+   "html_url": "https://ieeexplore.ieee.org/document/11260083/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/11260083/",
+   "publication_title": "2025 IEEE Energy Conversion Conference Congress and Exposition (ECCE)",
+   "conference_location": "Philadelphia, PA, USA",
+   "conference_dates": "19-23 Oct. 2025",
+   "publication_number": 11259441,
+   "is_number": 11259442,
+   "publication_year": 2025,
+   "publication_date": "19-23 Oct. 2025",
+   "start_page": "1",
+   "end_page": "6",
+   "citing_paper_count": 0,
+   "citing_patent_count": 0,
+   "download_count": 114,
+   "insert_date": "20251203",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Torque",
+      "Fluctuations",
+      "Hydrogen",
+      "Rotors",
+      "Sensorless control",
+      "Motors",
+      "Ice",
+      "Mechanical energy"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Cold startup",
+      "hydrogen recirculation blower (HRB)",
+      "permanent-magnet (PM) motor",
+      "sensorless drive",
+      "startup failure detection"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Failure Detection",
+      "Cold Start",
+      "Startup Failure",
+      "Electrical Energy",
+      "Cold Conditions",
+      "Mechanical Energy",
+      "Bit Error Rate",
+      "Bit Error Ratio",
+      "Ice Formation",
+      "Rotor Position",
+      "Sensorless Control",
+      "Normal Conditions",
+      "Normal State",
+      "Energy Calculations",
+      "Fuel Cell",
+      "Speed Control",
+      "Mechanical Power",
+      "Permanent Magnet Synchronous Motor",
+      "Permanent Magnet Synchronous",
+      "Instantaneous Power",
+      "Transient Period",
+      "Copper Loss",
+      "Loss Of Load",
+      "Motor Torque",
+      "Reference Speed",
+      "Reference Torque",
+      "Energy Error",
+      "Instantaneous Signal",
+      "Amount Of Electricity",
+      "Electrical Quantities"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3315-4131-6",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "USB ISBN",
+      "value": "979-8-3315-4129-3",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3315-4130-9",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/VPPC63154.2024.10755303",
+   "title": "Statistical investigation of the most influent parameters on the cold start of Proton Exchange Membrane Fuel Cell",
+   "publisher": "IEEE",
+   "isbn": "979-8-3315-4161-3",
+   "issn": "1938-8756",
+   "rank": 4,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France",
+      "authorUrl": "https://ieeexplore.ieee.org/author/751371855873135",
+      "id": 751371855873135,
+      "full_name": "Mattéo Gantzer",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France"
+       ]
+      }
+     },
+     {
+      "affiliation": "Université de Technologie de Belfort-Montbéliard Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37688911000",
+      "id": 37688911000,
+      "full_name": "Stefan Giurgea",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Université de Technologie de Belfort-Montbéliard Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France"
+       ]
+      }
+     },
+     {
+      "affiliation": "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37294222500",
+      "id": 37294222500,
+      "full_name": "Daniel Hissel",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France",
+        "Institut Universitaire de France (IUF)"
+       ]
+      }
+     },
+     {
+      "affiliation": "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37085492641",
+      "id": 37085492641,
+      "full_name": "Nadia Yousfi-Steiner",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Université de Franche-Comté Institut FEMTO-ST, FCLAB UTBM, CNRS, Belfort, France"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Cold start of Proton Exchange Membrane Fuel Cells (PEMFC) remains a challenge for widespread commercialization, especially in embedded application such as in the automotive industry. Here, we propose to statistically study various control and design parameters of a fuel cell system in order to identify the most prevailing ones on the cold start of a PEMFC. A physical model is used to simulate the cold start and the parameters are told apart by calculating their multiple correlation coefficient. It was found that the current density was the most determining factor, along with membrane thickness and initial water content of the ionomer. These results are useful for cold start strategy develoment and Response Surface Methodology and give perpec-tive on the impact of stack ageing and degradation on cold start performance.",
+   "article_number": "10755303",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10755303",
+   "html_url": "https://ieeexplore.ieee.org/document/10755303/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10755303/",
+   "publication_title": "2024 IEEE Vehicle Power and Propulsion Conference (VPPC)",
+   "conference_location": "Washington, DC, USA",
+   "conference_dates": "7-10 Oct. 2024",
+   "publication_number": 10755204,
+   "is_number": 10755185,
+   "publication_year": 2024,
+   "publication_date": "7-10 Oct. 2024",
+   "start_page": "1",
+   "end_page": "8",
+   "citing_paper_count": 0,
+   "citing_patent_count": 0,
+   "download_count": 89,
+   "insert_date": "20241120",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Correlation coefficient",
+      "Protons",
+      "Degradation",
+      "Water storage",
+      "Fuel cells",
+      "Water heating",
+      "Aging",
+      "Linear programming",
+      "Response surface methodology",
+      "Current density"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "PEMFC",
+      "cold start",
+      "multiple correlation coefficient"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Influence Of Parameters",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Cold Start",
+      "Membrane Fuel Cells",
+      "Water Content",
+      "Control Parameters",
+      "Design Parameters",
+      "Response Surface",
+      "Response Surface Methodology",
+      "Initial Water Content",
+      "Fuel Cell System",
+      "Electrode",
+      "Objective Function",
+      "R2 Values",
+      "Porous Media",
+      "Porous Materials",
+      "Porous Matrix",
+      "Water Storage",
+      "Water Productivity",
+      "Electrochemical Reaction",
+      "Tortuosity",
+      "Membrane Electrode Assembly",
+      "Direct Methanol Fuel Cells",
+      "Freezing Conditions",
+      "Gas Diffusion Layer",
+      "Electrochemical Active Surface",
+      "Ice Formation",
+      "Orthogonal Array",
+      "Water Storage Capacity",
+      "Gas Channel",
+      "Department Of Energy"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3315-4161-3",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3315-4160-6",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/TVT.2020.3011381",
+   "title": "An Online Self Cold Startup Methodology for PEM Fuel Cells in Vehicular Applications",
+   "publisher": "IEEE",
+   "issue": "12",
+   "issn": "1939-9359",
+   "rank": 5,
+   "volume": "69",
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37085750411",
+      "id": 37085750411,
+      "full_name": "Ali Amamou",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37086374327",
+      "id": 37086374327,
+      "full_name": "Mohsen Kandidayeni",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38513508100",
+      "id": 38513508100,
+      "full_name": "Sousso Kelouwani",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/38269331400",
+      "id": 38269331400,
+      "full_name": "Loïc Boulon",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Hydrogen Research Institut, University of Quebec at Trois-Rivieres, Trois-Rivières, QC, Canada"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Journals",
+   "abstract": "This paper puts forward an adaptive cold start strategy for a proton exchange membrane fuel cell (PEMFC) based on maximum power mode. The proposed strategy consists of a water evacuation process after PEMFC shutdown and a self-heating process at PEMFC cold startup. To maximize the performance of the suggested strategy, an optimal operating condition for the cold start procedure is sought first. In this respect, an experimental parametric study is performed to explore the impact of fan velocity, micro-short circuit, anode pressure, and purge procedure on the PEMFC cold start performance. After laying down the proper conditions, the proposed cold start procedure is implemented on a test bench for experimental validations. The self-heating process is based on an online adaptive algorithm that maximizes the PEMFC's internal heat depending on its operating parameters’ variation. In fact, this algorithm attempts to keep the current density at high levels, leading to PEMFC's performance improvement achieved by membrane hydration and temperature increase. The experimental results confirm the effectiveness of the proposed strategy, which presents a fast and cost-effective PEMFC's cold start.",
+   "article_number": "9146674",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9146674",
+   "html_url": "https://ieeexplore.ieee.org/document/9146674/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/9146674/",
+   "publication_title": "IEEE Transactions on Vehicular Technology",
+   "publication_number": 25,
+   "is_number": 9334471,
+   "publication_year": 2020,
+   "publication_date": "Dec. 2020",
+   "start_page": "14160",
+   "end_page": "14172",
+   "citing_paper_count": 25,
+   "citing_patent_count": 0,
+   "download_count": 974,
+   "insert_date": "20200723",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Heating systems",
+      "Anodes",
+      "Cathodes",
+      "Fans",
+      "Fuel cells",
+      "Hydrogen",
+      "Degradation"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Adaptive control",
+      "cold start strategy",
+      "kalman filter",
+      "proton exchange membrane fuel cell",
+      "vehicular applications"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Vehicular Applications",
+      "Cold Startup",
+      "Operating Conditions",
+      "Experimental Validation",
+      "Performance Parameters",
+      "Operating Parameters",
+      "Maximum Power",
+      "Adaptive Algorithm",
+      "Version Of Algorithm",
+      "Test Bench",
+      "Internal Heat",
+      "Cold Start",
+      "Maximum Mode",
+      "Minimum Mode",
+      "Electrode",
+      "Electric Power",
+      "Electrical System",
+      "Influence Of Parameters",
+      "Kalman Filter",
+      "Water Productivity",
+      "Loss Of Resistance",
+      "Ohmic Losses",
+      "Thermal Power",
+      "Polarization Curves",
+      "Fan Speed",
+      "Semi-empirical Model",
+      "Maximum Power Point",
+      "Ice Formation",
+      "Cathode Catalyst",
+      "Anode Side",
+      "Higher Heating Value",
+      "MJ Of Energy",
+      "Low Voltage Level",
+      "Hybrid Electric Vehicles"
+     ]
+    }
+   },
+   "license": "IEEE"
+  }
+ ],
+ "fuel cell cold start current ramp strategy": [],
+ "fuel cell stack cold start end cell temperature": [],
+ "fuel cell cold start auxiliary heating": [
+  {
+   "doi": "10.1109/PSGEC58411.2023.10255832",
+   "title": "Research Progress in Cold Start and Control Strategies of Proton Exchange Membrane Fuel Cell",
+   "publisher": "IEEE",
+   "isbn": "979-8-3503-4010-5",
+   "rank": 1,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37090011277",
+      "id": 37090011277,
+      "full_name": "Hua Yan",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37625471700",
+      "id": 37625471700,
+      "full_name": "Yinke Dou",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "The use of hydrogen energy has got wide attention under the “dual carbon” goal, and improving the cold startup performance and dynamic stability of proton exchange membrane fuel cell (PEMFC) using hydrogen as raw material is of great significance for the fuel cell industry and chemical industry. In extremely cold environments, the interior of the battery may freeze and block pores, obstructing the flow of chemically reactive gases and making it difficult to start the battery cold; Since PEMFC is a complex strong coupling nonlinear system, the output power stability fluctuation and output voltage uniformity deterioration will occur after the startup. In this paper, the research progress of proton exchange membrane fuel cells in recent years is reviewed from three cold start strategies, and the control strategies of the start-up cells are summarized. It also proposes a prospect for the development of PEMFC at low temperatures: a single cold start strategy and control strategy have their own advantages and disadvantages. Research on PEMFC should focus on collaborative control in multiple ways to ensure that the battery stack is not excessively damaged and adapt to extremely cold environment conditions.",
+   "article_number": "10255832",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10255832",
+   "html_url": "https://ieeexplore.ieee.org/document/10255832/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10255832/",
+   "publication_title": "2023 3rd Power System and Green Energy Conference (PSGEC)",
+   "conference_location": "Shanghai, China",
+   "conference_dates": "24-26 Aug. 2023",
+   "publication_number": 10255721,
+   "is_number": 10255807,
+   "publication_year": 2023,
+   "publication_date": "24-26 Aug. 2023",
+   "start_page": "1102",
+   "end_page": "1106",
+   "citing_paper_count": 1,
+   "citing_patent_count": 0,
+   "download_count": 185,
+   "insert_date": "20230926",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Protons",
+      "Voltage fluctuations",
+      "Hydrogen",
+      "Power system dynamics",
+      "Fuel cells",
+      "Power system stability",
+      "Raw materials"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "proton exchange membrane fuel cell",
+      "cold start",
+      "control strategy",
+      "cooperative control",
+      "research progress"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control Strategy",
+      "Control Scheme",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Cold Start",
+      "Raw Materials",
+      "Feedstock",
+      "Output Power",
+      "Nonlinear Systems",
+      "Hydrogen Energy",
+      "Hydrogen Fuel",
+      "Complex Nonlinear Systems",
+      "Artificial Neural Network",
+      "Neural Network Model",
+      "Working Conditions",
+      "Work Status",
+      "Power Generation",
+      "Electricity Generation",
+      "Constant Pressure",
+      "Constant Current",
+      "Voltage Drop",
+      "Potential Drop",
+      "IR Drop",
+      "Output Feature",
+      "Output Characteristics",
+      "Liquid Water",
+      "Model Predictive Control",
+      "PI Controller",
+      "Proportional Integral Controller",
+      "Fuzzy Control",
+      "External Heat",
+      "Auxiliary Measures",
+      "Power Generation Efficiency",
+      "Battery Temperature",
+      "Waste Heat",
+      "Low-grade Heat",
+      "Reaction Heat",
+      "Reaction Enthalpy",
+      "Internal Parameters",
+      "Electrical Wires",
+      "Ice Phase",
+      "Electrostatic Potential",
+      "Electric Potential"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3503-4010-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3503-4009-9",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ICMA69663.2026.11647564",
+   "title": "A Three-Objective Optimization for Fuel Cell-Metal Hydride System Cold Start Using MOPSO Algorithm",
+   "publisher": "IEEE",
+   "isbn": "979-8-3315-6284-7",
+   "issn": "2152-7431",
+   "rank": 2,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "College of Automotive and Energy Engineering, Tongji University, Shanghai, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37404546400",
+      "id": 37404546400,
+      "full_name": "Fengxiang Chen",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Automotive and Energy Engineering, Tongji University, Shanghai, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Automotive and Energy Engineering, Tongji University, Shanghai, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37090019221",
+      "id": 37090019221,
+      "full_name": "Hao Zhang",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Automotive and Energy Engineering, Tongji University, Shanghai, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "SAIC General Power Technology (Shanghai) Co., Ltd, Shanghai, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37089218779",
+      "id": 37089218779,
+      "full_name": "Yuansheng Li",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "SAIC General Power Technology (Shanghai) Co., Ltd, Shanghai, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "This paper proposes a surrogate-assisted multi-objective optimization framework integrated with fuzzy control to address the low-temperature (−5 °C) cold-start challenge in Fuel Cell-Metal Hydride (FC-MH) systems. A dynamic thermo-fluid model is developed alongside a low-level fuzzy controller that automates fuel cell temperature tracking at 60 °C. To reduce the computational cost of high-frequency dynamic simulations, a high-fidelity Kriging surrogate model is constructed. A Multi-Objective Particle Swarm Optimization (MOPSO) algorithm is then applied to actively optimize actuator commands (coolant flow rates and auxiliary heating power). The optimized 3D Pareto front reveals a fundamental control trade-off: a time-optimal strategy achieves rapid hydrogen desorption in 656 s (0.567 kWh consumed), while an energy-efficient strategy minimizes electrical consumption to 0.415 kWh (704 s startup) by maximizing waste heat recovery (0.353 kWh). This framework enables intelligent, automated thermal management for FC-MH applications.",
+   "article_number": "11647564",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11647564",
+   "html_url": "https://ieeexplore.ieee.org/document/11647564/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/11647564/",
+   "publication_title": "2026 IEEE International Conference on Mechatronics and Automation (ICMA)",
+   "conference_location": "Changchun, Jilin, China",
+   "conference_dates": "2-5 Aug. 2026",
+   "publication_number": 11647332,
+   "is_number": 11647333,
+   "publication_year": 2026,
+   "publication_date": "2-5 Aug. 2026",
+   "start_page": "772",
+   "end_page": "777",
+   "citing_paper_count": 0,
+   "citing_patent_count": 0,
+   "download_count": 5,
+   "insert_date": "20260817",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Optimization",
+      "Modeling",
+      "Equations",
+      "Fuels",
+      "Fuel cells",
+      "Metals",
+      "Temperature",
+      "Energy",
+      "Hydrogen",
+      "Waste heat"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Fuel Cellv",
+      "Metal Hydride",
+      "Cold start",
+      "Multi-Objective Optimization",
+      "Surrogate Model"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Cold Start",
+      "Multi-objective Particle Swarm Optimization",
+      "Hydride System",
+      "Three-objective Optimization",
+      "Dynamic Model",
+      "Dynamics Simulations",
+      "Optimization Algorithm",
+      "Fuel Cell",
+      "Multi-objective Optimization",
+      "Multi-objective Problem",
+      "Particle Swarm Optimization",
+      "Optimization Framework",
+      "Pareto Front",
+      "Pareto Frontier",
+      "Fuzzy Control",
+      "Heating Power",
+      "Waste Heat",
+      "Low-grade Heat",
+      "Low-level Control",
+      "Lower-level Control",
+      "Multi-objective Optimization Algorithm",
+      "Hydrogen Desorption",
+      "Auxiliary Power",
+      "Coolant Flow",
+      "Metal Hydride",
+      "Kriging Model",
+      "Hydrogen Storage",
+      "Heat Exchanger",
+      "Heat Transfer",
+      "Heat Flow",
+      "Heat Loss",
+      "Decision Variables",
+      "Energy Consumption",
+      "Energy Expenditure",
+      "Non-dominated Solutions",
+      "Thermocouple",
+      "Total Energy Consumption"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3315-6284-7",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3315-6283-0",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ITEC-India59098.2023.10471450",
+   "title": "Scalable Multi-physics Simulation to Support PEM Fuel Cell System Development",
+   "publisher": "IEEE",
+   "isbn": "979-8-3503-3781-5",
+   "rank": 3,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087320027",
+      "id": 37087320027,
+      "full_name": "Reinhard Tatschl",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087231269",
+      "id": 37087231269,
+      "full_name": "Daniel Ritzberger",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/395715260617999",
+      "id": 395715260617999,
+      "full_name": "Christoph Pötsch",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL India Pvt. Ltd., Gurgaon, India",
+      "authorUrl": "https://ieeexplore.ieee.org/author/513657538170237",
+      "id": 513657538170237,
+      "full_name": "Vinay Kumar",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL India Pvt. Ltd., Gurgaon, India"
+       ]
+      }
+     },
+     {
+      "affiliation": "AVL List GmbH, Graz, Austria",
+      "authorUrl": "https://ieeexplore.ieee.org/author/464025225974188",
+      "id": 464025225974188,
+      "full_name": "Anton M. Reiter",
+      "author_order": 5,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "AVL List GmbH, Graz, Austria"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Hydrogen powered fuel cell systems are a promising technology for future CO2 neutral vehicle propulsion. In the development of modern fuel cell systems for mobile applications, system simulation is used for a wide variety of tasks, ranging from concept layout to component design to virtual component integration and calibration. An efficient use of simulation requires scalable and consistent models, covering both the variety of application areas and the width of the modeling tasks related to cell, stack, system and vehicle. This article presents a holistic approach to PEM fuel cell system modelling as an enabler for the simulation-supported development of future mobility and transport solutions. The adopted multi-physical system simulation platform offers scalable modeling depth, applicable to fuel cell balance-of-plant development as well as virtual system integration and optimization. The detailed component models for stack and auxiliary units, such as humidifier, injector/ejector, air compressor and water separator, are based on the essential thermodynamic and electrochemical fundamentals. This approach ensures high accuracy and true extrapolation capabilities within the entire relevant system operation parameter space. Numerical robustness and fast solvers enable unconditional real-time capabilities as a prerequisite for efficient use in MiL, SiL and HiL environments. The applicability of the multi-physical simulation framework to fuel cell development related engineering challenges is demonstrated based on selected use-cases regarding humidifier sizing and compressor matching as well as cold-start strategy assessment, performance degradation analysis and control system development.",
+   "article_number": "10471450",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10471450",
+   "html_url": "https://ieeexplore.ieee.org/document/10471450/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10471450/",
+   "publication_title": "2023 IEEE International Transportation Electrification Conference (ITEC-India)",
+   "conference_location": "Chennai, India",
+   "conference_dates": "12-15 Dec. 2023",
+   "publication_number": 10471369,
+   "is_number": 10471370,
+   "publication_year": 2023,
+   "publication_date": "12-15 Dec. 2023",
+   "start_page": "1",
+   "end_page": "7",
+   "citing_paper_count": 1,
+   "citing_patent_count": 0,
+   "download_count": 72,
+   "insert_date": "20240325",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Thermodynamics",
+      "Atmospheric modeling",
+      "Systems operation",
+      "Fuel cells",
+      "Transportation",
+      "System integration",
+      "Robustness"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Model Based Design",
+      "Advanced Simulation",
+      "Fuel Cells",
+      "Electrification"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Multiphysics Simulation",
+      "Fuel Cell System",
+      "Electrochemical",
+      "Performance Parameters",
+      "Operating Parameters",
+      "Model Components",
+      "Simulation System",
+      "Use Of Simulation",
+      "Compressed Air",
+      "Simulation Platform",
+      "Water Separation",
+      "Cold Start",
+      "Applications In Various Areas",
+      "Variety Of Application Areas",
+      "Development Of Control Systems",
+      "Electrode",
+      "Water Content",
+      "System Performance",
+      "Efficient System",
+      "Gas Flow",
+      "Catalyst Layer",
+      "Stacking Model",
+      "Gas Diffusion Layer",
+      "Cell Voltage",
+      "Control Valve",
+      "Gas Stream",
+      "Chemical Degradation",
+      "Chemical Breakdown",
+      "Chemical Decomposition",
+      "Optimal Efficiency",
+      "External Heat",
+      "Local State",
+      "Local Status"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3503-3781-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3503-3780-8",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  }
+ ],
+ "fuel cell cold start control strategy": [
+  {
+   "doi": "10.1109/PSGEC58411.2023.10255832",
+   "title": "Research Progress in Cold Start and Control Strategies of Proton Exchange Membrane Fuel Cell",
+   "publisher": "IEEE",
+   "isbn": "979-8-3503-4010-5",
+   "rank": 1,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37090011277",
+      "id": 37090011277,
+      "full_name": "Hua Yan",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37625471700",
+      "id": 37625471700,
+      "full_name": "Yinke Dou",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Electrical and Power Engineering, Taiyuan University of Technology, Taiyuan, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "The use of hydrogen energy has got wide attention under the “dual carbon” goal, and improving the cold startup performance and dynamic stability of proton exchange membrane fuel cell (PEMFC) using hydrogen as raw material is of great significance for the fuel cell industry and chemical industry. In extremely cold environments, the interior of the battery may freeze and block pores, obstructing the flow of chemically reactive gases and making it difficult to start the battery cold; Since PEMFC is a complex strong coupling nonlinear system, the output power stability fluctuation and output voltage uniformity deterioration will occur after the startup. In this paper, the research progress of proton exchange membrane fuel cells in recent years is reviewed from three cold start strategies, and the control strategies of the start-up cells are summarized. It also proposes a prospect for the development of PEMFC at low temperatures: a single cold start strategy and control strategy have their own advantages and disadvantages. Research on PEMFC should focus on collaborative control in multiple ways to ensure that the battery stack is not excessively damaged and adapt to extremely cold environment conditions.",
+   "article_number": "10255832",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10255832",
+   "html_url": "https://ieeexplore.ieee.org/document/10255832/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10255832/",
+   "publication_title": "2023 3rd Power System and Green Energy Conference (PSGEC)",
+   "conference_location": "Shanghai, China",
+   "conference_dates": "24-26 Aug. 2023",
+   "publication_number": 10255721,
+   "is_number": 10255807,
+   "publication_year": 2023,
+   "publication_date": "24-26 Aug. 2023",
+   "start_page": "1102",
+   "end_page": "1106",
+   "citing_paper_count": 1,
+   "citing_patent_count": 0,
+   "download_count": 185,
+   "insert_date": "20230926",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Protons",
+      "Voltage fluctuations",
+      "Hydrogen",
+      "Power system dynamics",
+      "Fuel cells",
+      "Power system stability",
+      "Raw materials"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "proton exchange membrane fuel cell",
+      "cold start",
+      "control strategy",
+      "cooperative control",
+      "research progress"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control Strategy",
+      "Control Scheme",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Cold Start",
+      "Raw Materials",
+      "Feedstock",
+      "Output Power",
+      "Nonlinear Systems",
+      "Hydrogen Energy",
+      "Hydrogen Fuel",
+      "Complex Nonlinear Systems",
+      "Artificial Neural Network",
+      "Neural Network Model",
+      "Working Conditions",
+      "Work Status",
+      "Power Generation",
+      "Electricity Generation",
+      "Constant Pressure",
+      "Constant Current",
+      "Voltage Drop",
+      "Potential Drop",
+      "IR Drop",
+      "Output Feature",
+      "Output Characteristics",
+      "Liquid Water",
+      "Model Predictive Control",
+      "PI Controller",
+      "Proportional Integral Controller",
+      "Fuzzy Control",
+      "External Heat",
+      "Auxiliary Measures",
+      "Power Generation Efficiency",
+      "Battery Temperature",
+      "Waste Heat",
+      "Low-grade Heat",
+      "Reaction Heat",
+      "Reaction Enthalpy",
+      "Internal Parameters",
+      "Electrical Wires",
+      "Ice Phase",
+      "Electrostatic Potential",
+      "Electric Potential"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3503-4010-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3503-4009-9",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/VPPC.2008.4677650",
+   "title": "Control strategies design for a fuel cell hybrid electric vehicle",
+   "publisher": "IEEE",
+   "isbn": "978-1-4244-1849-7",
+   "issn": "1938-8756",
+   "partnum": "08EX2114",
+   "rank": 2,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Beijing Institute of Technology, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37536996400",
+      "id": 37536996400,
+      "full_name": "Hong-wen He",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Beijing Institute of Technology, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087660477",
+      "id": 37087660477,
+      "full_name": "Ying-qi Zhang",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Beijing Institute of Technology, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087661636",
+      "id": 37087661636,
+      "full_name": "Fan Wan",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Under the pressure of air pollution and oil shortage of transportations, hydrogen as a renewable and clean energy gets more and more attentions from all over the world. Nowadays, for the cost and not matured technology of fuel cell stack, hybrid system becomes the best solution. For a 5-ton fuel cell hybrid electric bus discussed in this paper, high-pressure PEMFC and high-power NiMH battery pack forms the hybrid system. In order to get the higher fuel efficiency and avoid the frequent charge & discharge of battery pack, a fuel cell output power-oriented control system is built. Also three kinds of control strategies for the control system are put forward as conventional Fuel cell output power oriented control, Fuel cell output power oriented control based on FCE loading and unloading equations and FCE output power oriented control based on instantaneous power optimization. Their corresponding effects are compared based on simulation results. Finally, the fuel cell output power-oriented control system was applied on the fuel cell hybrid electric bus and the experiments are carried out.",
+   "article_number": "4677650",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4677650",
+   "html_url": "https://ieeexplore.ieee.org/document/4677650/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/4677650/",
+   "publication_title": "2008 IEEE Vehicle Power and Propulsion Conference",
+   "conference_location": "Harbin, China",
+   "conference_dates": "3-5 Sept. 2008",
+   "publication_number": 4663469,
+   "is_number": 4677399,
+   "publication_year": 2008,
+   "publication_date": "3-5 Sept. 2008",
+   "start_page": "1",
+   "end_page": "6",
+   "citing_paper_count": 12,
+   "citing_patent_count": 0,
+   "download_count": 1464,
+   "insert_date": "20081118",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Fuel cells",
+      "Hybrid electric vehicles",
+      "Control systems",
+      "Power generation",
+      "Batteries",
+      "Air pollution",
+      "Petroleum",
+      "Air transportation",
+      "Hydrogen",
+      "Costs"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Control strategy",
+      "hybrid system",
+      "fuel cell",
+      "electric vehicle",
+      "simulation"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control Strategy",
+      "Control Scheme",
+      "Fuel Cell",
+      "Hybrid Electric",
+      "Hybrid Electric Vehicles",
+      "Fuel Cell Hybrid",
+      "Simulation Results",
+      "Control System",
+      "Output Power",
+      "Hybrid System",
+      "Kinds Of Strategies",
+      "Kinds Of Schemes",
+      "Loading And Unloading",
+      "Dockworkers",
+      "Power System",
+      "State Of Charge",
+      "Electrical Engineering",
+      "Electric Motor",
+      "Output Current",
+      "Exercise Of Power",
+      "Power Training",
+      "Energy Storage Systems",
+      "Compressed Air",
+      "Internal Combustion Engine",
+      "Automotive Engineering",
+      "Control Logic",
+      "Hydrogen Economy",
+      "Bus Lines",
+      "Control Scheme For Systems",
+      "Control Strategy For System",
+      "Instantaneous Distribution",
+      "Cold Start",
+      "Green Vehicle",
+      "Eco-car",
+      "Clean Vehicles",
+      "Eco-friendly Vehicles",
+      "Hydrogen Consumption",
+      "Equivalent Consumption",
+      "Peak Output Power",
+      "Equivalent Rate"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "CD",
+      "value": "978-1-4244-1849-7",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Print ISBN",
+      "value": "978-1-4244-1848-0",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ITEC63604.2025.11098133",
+   "title": "Adaptive Cold Start of PEM Fuel Cell by Tracking the Maximum Power Point",
+   "publisher": "IEEE",
+   "isbn": "979-8-3315-2215-5",
+   "issn": "2377-5483",
+   "rank": 3,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "National Engineering Laboratroy for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/824682668614987",
+      "id": 824682668614987,
+      "full_name": "Ruoyang Song",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratroy for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "National Engineering Laboratroy for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37086053689",
+      "id": 37086053689,
+      "full_name": "Zhongbao Wei",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratroy for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "China North Vehicle Research Institute, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37088971318",
+      "id": 37088971318,
+      "full_name": "Deshuai Sun",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "China North Vehicle Research Institute, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "China North Vehicle Research Institute, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/613304806962943",
+      "id": 613304806962943,
+      "full_name": "Weihong Zang",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "China North Vehicle Research Institute, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "China North Vehicle Research Institute, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37089463292",
+      "id": 37089463292,
+      "full_name": "Yulin Luo",
+      "author_order": 5,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "China North Vehicle Research Institute, Beijing, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Cold start is the essential issue to wide-spread of proton exchange membrane (PEM) fuel cell in vehicular application. To achieve rapid cold-start, an adaptive strategy is developed by tracking the unique maximum power point (MPP) of fuel cell plant. First, the control-orient model is established with three interacted parts: water balance, heat balance and performance estimation. To elaborate the interactions, the ice fraction and fuel cell are incorporated to predict the output performance. Based on the constructed model, the MPPs are sought to forming an adaptive strategy during start-up operation. With the heat generated as much as possible, the max power mode strategy presents a lower voltage and shorter start-up time, with 25.4 s time saving. Results suggest the superiority and effectiveness of the established model and the adopted strategy.",
+   "article_number": "11098133",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11098133",
+   "html_url": "https://ieeexplore.ieee.org/document/11098133/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/11098133/",
+   "publication_title": "2025 IEEE/AIAA Transportation Electrification Conference and Electric Aircraft Technologies Symposium (ITEC+EATS)",
+   "conference_location": "Anaheim, CA, USA",
+   "conference_dates": "18-20 June 2025",
+   "publication_number": 11097905,
+   "is_number": 11097906,
+   "publication_year": 2025,
+   "publication_date": "18-20 June 2025",
+   "start_page": "01",
+   "end_page": "06",
+   "citing_paper_count": 0,
+   "citing_patent_count": 0,
+   "download_count": 62,
+   "insert_date": "20250805",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Protons",
+      "Adaptation models",
+      "Temperature",
+      "Fuel cells",
+      "Water heating",
+      "Transportation",
+      "Voltage",
+      "Ice",
+      "Vehicle dynamics",
+      "Optimization"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "PEM fuel cell",
+      "cold start strategy",
+      "controloriented model"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Maximum Power",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Maximum Power Point",
+      "Cold Start",
+      "Low Voltage",
+      "Water Balance",
+      "Maximum Point",
+      "Heat Balance",
+      "Vehicular Applications",
+      "Phase Transition",
+      "Voltage Drop",
+      "Potential Drop",
+      "IR Drop",
+      "Adaptive Control",
+      "I-V Curves",
+      "Current Voltage Characteristics",
+      "I-V Characteristics",
+      "Exothermic Reaction",
+      "Exothermic Process",
+      "Cell Voltage",
+      "Oxygen Reduction Reaction",
+      "Faraday Constant",
+      "Catalyst Layer",
+      "Gas Diffusion Layer",
+      "Maximum Mode",
+      "Minimum Mode"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3315-2215-5",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3315-2214-8",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/TPEL.2009.2020559",
+   "title": "Power Management for Fuel-Cell Power System Cold Start",
+   "publisher": "IEEE",
+   "issue": "10",
+   "issn": "1941-0107",
+   "rank": 4,
+   "volume": "24",
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37272977700",
+      "id": 37272977700,
+      "full_name": "Ke Jin",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Electrical and Electronic Engineering, Huazhong University of Science and Technology, Wuhan, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37272848800",
+      "id": 37272848800,
+      "full_name": "Xinbo Ruan",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Electrical and Electronic Engineering, Huazhong University of Science and Technology, Wuhan, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37713588100",
+      "id": 37713588100,
+      "full_name": "Mengxiong Yang",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37709101300",
+      "id": 37709101300,
+      "full_name": "Min Xu",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Aero-Power Sci-Tech Center, Nanjing University of Aeronautics and Astronautics, Nanjing, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Journals",
+   "abstract": "Fuel cells are difficult to cold start. This letter proposes a power management control strategy for cold-starting fuel-cell systems. The operation principles of the system's cold start are analyzed in detail. A battery powers the load through a bidirectional converter at the beginning of the cold-start state. After the fuel cell finishes its self-start, the fuel cell slips in and the battery slips out of the system, and the fuel cell powers the load independently. The appropriate soft-start control strategies for bidirectional and unidirectional converters are proposed in this letter. A 1-kW fuel-cell power system is built in the laboratory, and experimental results are shown to verify the theoretical analysis.",
+   "article_number": "5200360",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=5200360",
+   "html_url": "https://ieeexplore.ieee.org/document/5200360/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/5200360/",
+   "publication_title": "IEEE Transactions on Power Electronics",
+   "publication_number": 63,
+   "is_number": 5226771,
+   "publication_year": 2009,
+   "publication_date": "Oct. 2009",
+   "start_page": "2391",
+   "end_page": "2395",
+   "citing_paper_count": 64,
+   "citing_patent_count": 1,
+   "download_count": 1809,
+   "insert_date": "20090811",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Power system management",
+      "Energy management",
+      "Batteries",
+      "Fuel cells",
+      "Hybrid power systems",
+      "Power system analysis computing",
+      "Power system reliability",
+      "Supercapacitors",
+      "Load flow",
+      "Aerodynamics"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Battery",
+      "bidirectional converter (BDC)",
+      "fuel cell",
+      "power management",
+      "unidirectional converter (UDC)"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Power Management",
+      "Cold Start",
+      "Control Strategy",
+      "Control Scheme",
+      "Battery Power",
+      "Battery Technology",
+      "Battery Electric",
+      "Bidirectional Converter",
+      "Fuel Cell System",
+      "Output Power",
+      "Start-up",
+      "Duty Cycle",
+      "Supercapacitors",
+      "Output Current",
+      "Setup Time",
+      "Active Switches",
+      "Starting State",
+      "Acceptable State",
+      "Switching Cycle",
+      "Bidirectional Control",
+      "Diode Switches"
+     ]
+    }
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ICSGGE69348.2026.11508988",
+   "title": "Analysis of Key Technologies for an Advanced Fuel Cell Vehicle",
+   "publisher": "IEEE",
+   "isbn": "979-8-3315-6320-2",
+   "rank": 5,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "CATARC Automotive Test Center (Tianjin) Co., Ltd., Tianjin, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/193386607318839",
+      "id": 193386607318839,
+      "full_name": "Ting Guo",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "CATARC Automotive Test Center (Tianjin) Co., Ltd., Tianjin, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "CATARC Automotive Test Center (Tianjin) Co., Ltd., Tianjin, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37088956699",
+      "id": 37088956699,
+      "full_name": "Guozhuo Wang",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "CATARC Automotive Test Center (Tianjin) Co., Ltd., Tianjin, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Tianjin University, Tianjin, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37089115234",
+      "id": 37089115234,
+      "full_name": "Ying Tian",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Tianjin University, Tianjin, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "China Automotive Technology and Research Center Co., Ltd., Tianjin, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/602503539228885",
+      "id": 602503539228885,
+      "full_name": "Fang Wang",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "China Automotive Technology and Research Center Co., Ltd., Tianjin, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "In the face of the challenges of global energy crisis and environmental pollution, this study aims at the key technical bottlenecks of hydrogen fuel cell passenger vehicles in extreme environments, and improves the reliability of the system through efficient low-temperature cold start testing, vehicle electronic control mechanism and vehicle thermal management system in low temperature environment. For the low temperature condition of minus 30° C, the cold start time is shortened to 42.28 seconds by limiting the output voltage of the stack and coordinating heating from multiple heat sources. In the electronic control stage of the vehicle in a low temperature environment, the risk of hydrogen accumulation is eliminated through safety response, and the redundant battery design ensures the stability of the lowvoltage system. At the same time, the thermal management system realizes the stable control of the air temperature in front of the stack radiator, and reveals the optimization requirements of the front exhaust air duct in the cockpit. The research results effectively improve the reliability of fuel cell vehicles in extreme environments and provide support for their commercial application under all-climate conditions.",
+   "article_number": "11508988",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=11508988",
+   "html_url": "https://ieeexplore.ieee.org/document/11508988/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/11508988/",
+   "publication_title": "2026 5th International Conference on Smart Grid and Green Energy (ICSGGE)",
+   "conference_location": "Dongfang, China",
+   "conference_dates": "20-22 March 2026",
+   "publication_number": 11508120,
+   "is_number": 11506521,
+   "publication_year": 2026,
+   "publication_date": "20-22 March 2026",
+   "start_page": "644",
+   "end_page": "648",
+   "citing_paper_count": 0,
+   "citing_patent_count": 0,
+   "download_count": 21,
+   "insert_date": "20260513",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Temperature",
+      "Stacking",
+      "Fuels",
+      "Fuel cells",
+      "Vehicles",
+      "Hydrogen",
+      "Timing",
+      "Fuel cell vehicles",
+      "Current",
+      "Energy"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "fuel cell vehicles",
+      "key technologies",
+      "low temperature cold start strategy",
+      "thermal management system"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Fuel Cell",
+      "Fuel Cell Vehicles",
+      "Air Temperature",
+      "Atmospheric Temperature",
+      "Cold Temperatures",
+      "Commercial Applications",
+      "Extreme Environments",
+      "Thermal System",
+      "Thermal Management",
+      "Hydrogen Energy",
+      "Hydrogen Fuel",
+      "Risk Of Accumulation",
+      "Cold Start",
+      "Cockpit",
+      "Hydrogen Fuel Cells",
+      "Output Power",
+      "Electric Vehicles",
+      "Inverter",
+      "Battery Power",
+      "Battery Technology",
+      "Battery Electric",
+      "Heat Dissipation",
+      "Output Current",
+      "Front Row",
+      "High-voltage System",
+      "Compressed Air",
+      "Pure Electric",
+      "Full Electric",
+      "Pure Electric Vehicles",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Thermal Balance",
+      "Start-up Time",
+      "Cold Stage",
+      "Vehicle Components",
+      "Air Supply"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "Print on Demand(PoD) ISBN",
+      "value": "979-8-3315-6320-2",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Electronic ISBN",
+      "value": "979-8-3315-6319-6",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/VPPC.2007.4544097",
+   "title": "Performance Characterization and Comparison of Power Control Strategies for Fuel Cell Based Hybrid Electric Vehicles",
+   "publisher": "IEEE",
+   "isbn": "978-0-7803-9761-3",
+   "issn": "1938-8756",
+   "partnum": "07EX1461",
+   "rank": 6,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "P. D. Ziogas Power Electronics Laboratory, Department of Electrical and Computer Engineering, Concordia University, Montreal, QUE, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37877486100",
+      "id": 37877486100,
+      "full_name": "Di Wu",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "P. D. Ziogas Power Electronics Laboratory, Department of Electrical and Computer Engineering, Concordia University, Montreal, QUE, Canada"
+       ]
+      }
+     },
+     {
+      "affiliation": "P. D. Ziogas Power Electronics Laboratory, Department of Electrical and Computer Engineering, Concordia University, Montreal, QUE, Canada",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37267519200",
+      "id": 37267519200,
+      "full_name": "Sheldon S. Williamson",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "P. D. Ziogas Power Electronics Laboratory, Department of Electrical and Computer Engineering, Concordia University, Montreal, QUE, Canada"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Fuel Cell-Hybrid Electric Vehicles (FC- HEVs) have become one of the most promising alternatives for the development of low emission and fuel efficient vehicles. A FC-HEV drive train essentially requires an optimal control strategy for appropriate power management and regulation between different on-board energy sources and the electric propulsion system. In this paper, two popular types of power control strategies for FC-HEVs are investigated. These include the power follower scheme and the equivalent consumption minimization strategy (ECMS). Both control strategies are modelled, simulated, and tested specifically for a rear- wheel driven mid-sized sport-utility vehicle (SUV). The behaviour and favourability of the two strategies from the point of view of critical performance aspects are compared and analyzed, based on which, further optimization suggestions and techniques are presented.",
+   "article_number": "4544097",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4544097",
+   "html_url": "https://ieeexplore.ieee.org/document/4544097/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/4544097/",
+   "publication_title": "2007 IEEE Vehicle Power and Propulsion Conference",
+   "conference_location": "Arlington, TX, USA",
+   "conference_dates": "9-12 Sept. 2007",
+   "publication_number": 4539636,
+   "is_number": 4544069,
+   "publication_year": 2007,
+   "publication_date": "9-12 Sept. 2007",
+   "start_page": "55",
+   "end_page": "61",
+   "citing_paper_count": 6,
+   "citing_patent_count": 0,
+   "download_count": 500,
+   "insert_date": "20080617",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Power control",
+      "Fuel cells",
+      "Hybrid electric vehicles",
+      "Fuel cell vehicles",
+      "Optimal control",
+      "Energy management",
+      "Management training",
+      "Power system management",
+      "Propulsion",
+      "Brushless DC motors"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Electric propulsion",
+      "fuel cell vehicles",
+      "modelling",
+      "road vehicles",
+      "traction motor drives"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control Strategy",
+      "Control Scheme",
+      "Fuel Cell",
+      "Power Control",
+      "Hybrid Electric",
+      "Power Control Scheme",
+      "Power Control Strategy",
+      "Electric Vehicles",
+      "Types Of Strategies",
+      "Typing Scheme",
+      "Electric Propulsion",
+      "Sampling Time",
+      "Efficient System",
+      "Output Power",
+      "State Of Charge",
+      "Control Performance",
+      "Constant Speed",
+      "Power Demand",
+      "Electricity Demand",
+      "Energy Storage Systems",
+      "Power Requirements",
+      "Vehicle Operation",
+      "Vehicle Performance",
+      "Mapping Efficiency",
+      "Hybrid Electric Vehicles",
+      "Battery State Of Charge",
+      "Fuel Cell System",
+      "Cold Start",
+      "Power Splitting",
+      "Regenerative Braking",
+      "Bus Power",
+      "Efficiency Of Vehicles"
+     ]
+    }
+   },
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "CD",
+      "value": "978-0-7803-9761-3",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Print ISBN",
+      "value": "978-0-7803-9760-6",
+      "isbnType": "New-2005"
+     }
+    ]
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/TTE.2025.3526184",
+   "title": "Anodic Cold Start Control of PEM Fuel Cell System With Temperature-Dependent Solenoid Valve Model",
+   "publisher": "IEEE",
+   "issue": "3",
+   "issn": "2372-2088",
+   "rank": 7,
+   "volume": "11",
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/824682668614987",
+      "id": 824682668614987,
+      "full_name": "Ruoyang Song",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37086053689",
+      "id": 37086053689,
+      "full_name": "Zhongbao Wei",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Engineering Laboratory for Electric Vehicles, School of Mechanical Engineering, Beijing Institute of Technology, Beijing, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "National Center of Technology Innovation for Fuel Cell, Weichai Power Company Ltd., Weifang, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37088939824",
+      "id": 37088939824,
+      "full_name": "Fengwen Pan",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "National Center of Technology Innovation for Fuel Cell, Weichai Power Company Ltd., Weifang, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "College of Mechanical and Vehicle Engineering, Chongqing University, Chongqing, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37087239387",
+      "id": 37087239387,
+      "full_name": "Caizhi Zhang",
+      "author_order": 4,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "College of Mechanical and Vehicle Engineering, Chongqing University, Chongqing, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Journals",
+   "abstract": "Precise supply control is one of the most critical challenges for proton exchange membrane (PEM) fuel cell (FC) system to implement rapid cold start. Focusing on the low-temperature adaptability, this article proposed a model-based control framework for PEM FC hydrogen system. First, the challenge in anodic cold start control is revealed and summarized through cold start experiments. According to the investigated phenomenon, the solenoid valve model is established with the distinguished characteristic of temperature dependent. It contains three subsystems, namely, the electromagnetic, mechanical, and fluid subsystems, which couples the temperature variable with the electromagnetic part and finally affects the controlled pressure. To copy with this challenge, a model-based feedforward term is incorporated in control framework based on the established model. Moreover, the proposed model-based framework is validated under different strategies, temperatures, and controllers. The resultant model has high accuracy with the error of 3.84%, and the proposed control framework suppresses the pressure overshoot with a 16.75% improvement. The satisfactory results illustrate the effectiveness of the model-based approach in anode control to enhance the cold start capability and durability.",
+   "article_number": "10829628",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10829628",
+   "html_url": "https://ieeexplore.ieee.org/document/10829628/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/10829628/",
+   "publication_title": "IEEE Transactions on Transportation Electrification",
+   "publication_number": 6687316,
+   "is_number": 11008803,
+   "publication_year": 2025,
+   "publication_date": "June 2025",
+   "start_page": "7300",
+   "end_page": "7308",
+   "citing_paper_count": 2,
+   "citing_patent_count": 0,
+   "download_count": 333,
+   "insert_date": "20250106",
+   "index_terms": {
+    "ieee_terms": {
+     "terms": [
+      "Valves",
+      "Solenoids",
+      "Hydrogen",
+      "Anodes",
+      "Fuel cells",
+      "Temperature",
+      "Temperature dependence",
+      "Atmospheric modeling",
+      "Fluids",
+      "Electromagnetics"
+     ]
+    },
+    "author_terms": {
+     "terms": [
+      "Anode pressure control",
+      "cold start",
+      "proton exchange membrane (PEM) fuel cell (FC) system",
+      "susceptible components"
+     ]
+    },
+    "dynamic_index_terms": {
+     "terms": [
+      "Control System",
+      "Fuel Cell",
+      "Proton Exchange Membrane",
+      "Polymer Electrolyte Membrane",
+      "Solenoid Valve",
+      "Cold Start",
+      "Temperature-dependent Model",
+      "Fuel Cell System",
+      "Precise Control",
+      "Model-based Control",
+      "Model-based Framework",
+      "Linear Model",
+      "Linear Regression Model",
+      "Control Variables",
+      "Control Strategy",
+      "Control Scheme",
+      "Pulse Width",
+      "Pulsewidth Modulation",
+      "Pressure Control",
+      "Adaptive Control",
+      "Normal Temperature",
+      "Relative Permeability",
+      "Magnetic Permeability",
+      "Permeability Of Space",
+      "Magnetic Force",
+      "Lorentz Force",
+      "Magnetic Flux",
+      "Magnetic Flux Density",
+      "Hydrogen Pressure",
+      "Adaptive Capabilities",
+      "Electromagnetic Characteristics",
+      "Electromagnetic Features",
+      "Proportional-integral-derivative",
+      "Proportional-integral-derivative Controller",
+      "PID Controller",
+      "Temperature-dependent Characteristics",
+      "Temperature-dependent Features",
+      "Switching Valve",
+      "Feedback Term",
+      "Control Valve",
+      "Feedforward Control",
+      "Excessive Pressure"
+     ]
+    }
+   },
+   "license": "IEEE"
+  },
+  {
+   "doi": "10.1109/ACC.2008.4586558",
+   "title": "Fuel cell output power-oriented control for a fuel cell hybrid electric vehicle",
+   "publisher": "IEEE",
+   "isbn": "978-1-4244-2079-7",
+   "issn": "2378-5861",
+   "partnum": "08CH37995",
+   "rank": 8,
+   "authors": {
+    "authors": [
+     {
+      "affiliation": "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37536996400",
+      "id": 37536996400,
+      "full_name": "Hong-wen He",
+      "author_order": 1,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37634060600",
+      "id": 37634060600,
+      "full_name": "Jian-ping Gao",
+      "author_order": 2,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China"
+       ]
+      }
+     },
+     {
+      "affiliation": "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China",
+      "authorUrl": "https://ieeexplore.ieee.org/author/37088096046",
+      "id": 37088096046,
+      "full_name": "Ya-ming Zhang",
+      "author_order": 3,
+      "authorAffiliations": {
+       "authorAffiliation": [
+        "Beijing Institute of Technology, No.5 Zhongguancun South Street, Haidian District, China"
+       ]
+      }
+     }
+    ]
+   },
+   "access_type": "LOCKED",
+   "content_type": "Conferences",
+   "abstract": "Under the pressure of air pollution and oil shortage of transportations, hydrogen as a renewable and clean energy gets more and more attentions from all over the world. There predicts that the 21s' century will be a hydrogen century. Nowadays, for the cost and not matured technology of fuel cell stack, hybrid system becomes the best solution. For a 5-ton fuel cell hybrid electric bus discussed in this paper, high-pressure PEMFC and high-power NiMH battery pack forms the hybrid system. In order to obtain the higher fuel efficiency and avoid the frequent charge & discharge of battery pack, a fuel cell output power-oriented control system is built. Also two kinds of control strategies for the control system are put forward as conventional Fuel cell output power oriented control, Fuel cell output power oriented control based on FCE loading and unloading equations. Their corresponding effects are compared based on simulation results. Finally, the fuel cell output power-oriented control system was applied on the fuel cell hybrid electric bus and the experiments are carried out. The Experimental results indicate that the fuel cell output power can follow the driver's requirement very well and the hybrid bus has a good hydrogen economy.",
+   "article_number": "4586558",
+   "pdf_url": "https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=4586558",
+   "html_url": "https://ieeexplore.ieee.org/document/4586558/",
+   "abstract_url": "https://ieeexplore.ieee.org/document/4586558/",
+   "publication_title": "2008 American Control Conference",
+   "conference_location": "Seattle, WA, USA",
+   "conference_dates": "11-13 June 2008",
+   "publication_number": 4547420,
+   "is_number": 4586444,
+   "publication_year": 2008,
+   "publication_date": "11-13 June 2008",
+   "start_page": "605",
+   "end_page": "610",
+   "citing_paper_count": 6,
+   "citing_patent_count": 0,
+   "download_count": 913,
+   "insert_date": "20080805",
+   "isbn_formats": {
+    "isbns": [
+     {
+      "format": "CD",
+      "value": "978-1-4244-2079-7",
+      "isbnType": "New-2005"
+     },
+     {
+      "format": "Print ISBN",
+      "value": "978-1-4244-2078-0",
+      "isbnType": "New-2005"
+     }
+    ]
+   }
+  }
+ ]
+}
