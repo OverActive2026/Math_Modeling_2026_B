@@ -152,13 +152,9 @@ FUNCTION {format.access}
       if$
       ""
     }
-    { language empty$
+    { is.english
+        { "Accessed: " urldate * }
         { "访问时间：" urldate * }
-        { language "en" = language "english" = or
-            { "Accessed: " urldate * }
-            { "访问时间：" urldate * }
-          if$
-        }
       if$
     }
   if$
