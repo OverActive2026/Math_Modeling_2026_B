@@ -1,0 +1,19 @@
+function j = current_linear(t,par)
+%CURRENT_LINEAR 线性升载；t [s]，r [A/(cm^2 s)]，j [A/cm^2]。
+p = parameters_Q2();
+if isfield(par,'j_max'), limit = par.j_max; else, limit = p.j_max; end
+required = {'j0','r','j_cap'};
+if ~all(isfield(par,required))
+    error('Q2:InvalidLinearStrategy','缺少 j0、r 或 j_cap。');
+end
+if ~isscalar(t) || ~isfinite(t) || t < 0 || ...
+        ~isscalar(par.j0) || ~isfinite(par.j0) || ...
+        ~isscalar(par.r) || ~isfinite(par.r) || ...
+        ~isscalar(par.j_cap) || ~isfinite(par.j_cap) || ...
+        par.j0 < 0 || par.r < 0 || par.j_cap < par.j0 || ...
+        par.j_cap > limit
+    error('Q2:InvalidLinearStrategy', ...
+        '要求 0<=j0<=j_cap<=j_max、r>=0、t>=0。');
+end
+j = min(par.j0+par.r*t,par.j_cap);
+end
