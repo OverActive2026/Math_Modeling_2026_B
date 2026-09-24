@@ -10,18 +10,18 @@
 %            out->扩散通量、源项、动态孔隙率和守恒检查
 %
 % [ICE-3] 冰与液态水共同占据孔隙，并在气体存储项中计入deps_g/dt。
+% [HYD-1] cCL离聚物结合水不占孔隙；动态气孔隙率使用扣除结合水后的
+%   mPore和dmPore计算，避免把水合过程误判成孔隙积水。
 %-------------------------------------------------------------------------------
 
 function [dcH2,dcO2,out] = gas_transport_state_ice( ...
-    T,cH2,cO2,mw,dmw,dT,water,thermal,j,g,~)
+    T,cH2,cO2,~,~,dT,water,thermal,j,g,~)
 
     %% 1. 输入处理
 
     T = T(:);
     cH2 = max(cH2(:),0);
     cO2 = max(cO2(:),0);
-    mw = max(mw(:),0);
-    dmw = dmw(:);
     dT = dT(:);
     R = 8.314;    % [J/(mol K)]
     F = 96485;    % [C/mol]
@@ -72,8 +72,8 @@ function [dcH2,dcO2,out] = gas_transport_state_ice( ...
     % [ICE-3] 未饱和时eps_g=eps0-mi/rhoIce，故：
     %   deps_g/dt=-dmi/(rhoIce*dt)
     % 饱和时联立气液平衡可得：
-    %   eps_g=[rhoL*eps0-mw+mi*(1-rhoL/rhoI)]/(rhoL-A)
-    % 再分别对mw、mi和A(T)求偏导。
+    %   eps_g=[rhoL*eps0-mPore+mi*(1-rhoL/rhoI)]/(rhoL-A)
+    % 再分别对mPore、mi和A(T)求偏导。
 
     depsGdt = -water.dmiFull/rhoIce;
     saturated = water.ml > 0;
@@ -92,13 +92,13 @@ function [dcH2,dcO2,out] = gas_transport_state_ice( ...
         dAdT = (Aplus-Aminus)/(2*deltaT);
 
         denominator = rhoLiquid-A;
-        numerator = rhoLiquid.*eps0-mw + ...
+        numerator = rhoLiquid.*eps0-water.mPore + ...
             water.miFull.*(1-rhoLiquid/rhoIce);
         depsDmw = -1./denominator;
         depsDmi = (1-rhoLiquid/rhoIce)./denominator;
         depsDA = numerator./denominator.^2;
         depsGdt(saturated) = ...
-            depsDmw(saturated).*dmw(saturated) + ...
+            depsDmw(saturated).*water.dmPore(saturated) + ...
             depsDmi(saturated).*water.dmiFull(saturated) + ...
             depsDA(saturated).*dAdT(saturated).*dT(saturated);
     end

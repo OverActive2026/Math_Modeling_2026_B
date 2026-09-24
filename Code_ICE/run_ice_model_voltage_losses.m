@@ -14,22 +14,37 @@
 %   voltageLosses.T20、voltageLosses.T25
 %-------------------------------------------------------------------------------
 
-%% 1. 活化损失参数
-% [ACT-1] 由-20/-25 degC两个零时刻电压联合标定。
+%% 1. 活化损失与水合反应面积参数
+% [ACT-2][HYD-3] j0Ref为充分水合状态的参考值。
 
-j0Ref = 0.00807579349527; % 298.15 K参考交换电流密度 [A/m^2]
-Ea = 22204.0159133;       % 活化能 [J/mol]
+j0Ref = 0.0827422651388;  % 298.15 K湿态参考交换电流密度 [A/m^2]
+Ea = 7028.980902;         % [ACT-2] 温度修正活化能 [J/mol]
+fHydDry = 0.06;           % 干态cCL可利用反应面积比例 [-]
+lambdaHydOn = 3.5;        % 反应面积开始恢复的lambda [-]
+lambdaHydWet = 8.0;       % 反应面积完全恢复的lambda [-]
+nHyd = 3.0;               % 水合反应面积恢复指数 [-]
 
 
-%% 2. 三个冰模型标定参数
+%% 2. cCL离聚物水合参数
+
+lambdaCCL0 = 1.0; % cCL初始平均离聚物含水量 [-]
+tauHyd = 10;      % cCL离聚物水合时间常数 [s]
+
+
+%% 3. 阴极有限排水参数
+
+hVaporCathode = 0.01; % [WATER-2] cGDL/干空气气道传质系数 [m/s]
+
+
+%% 4. 三个冰模型标定参数
 % 与当前run_ice_model.m保持一致；可在本副本中单独调整。
 
-kFreeze = 10000;  % 冻结速率系数 [1/(K s)]
-kMelt = 0;        % 融化速率系数 [1/(K s)]
-gammaIce = 0;     % cCL冰覆盖对有效反应面积的修正指数 [-]
+kFreeze = 1;      % 冻结非平衡速率系数 [1/s]，文献量级初值
+kMelt = 0;        % 当前工况未越过冰点，暂不可辨识
+gammaIce = 0.1;   % 与主调用脚本保持一致 [-]
 
 
-%% 3. 计算和绘图设置
+%% 5. 计算和绘图设置
 
 temperatureCases = [-20,-25]; % 可改为-20、-25或[-20,-25]
 tEnd = [];                     % []表示使用附件2的完整时间
@@ -38,10 +53,17 @@ showVoltageLossPlot = true;    % 新增的电压组成图
 showInformation = true;        % true显示求解信息
 
 
-%% 4. 整理求解选项
+%% 6. 整理求解选项
 
 simOpt.j0Ref = j0Ref;
 simOpt.Ea = Ea;
+simOpt.fHydDry = fHydDry;
+simOpt.lambdaHydOn = lambdaHydOn;
+simOpt.lambdaHydWet = lambdaHydWet;
+simOpt.nHyd = nHyd;
+simOpt.tauHyd = tauHyd;
+simOpt.hVaporCathode = hVaporCathode;
+simOpt.init.lambdaCCL0 = lambdaCCL0;
 simOpt.kFreeze = kFreeze;
 simOpt.kMelt = kMelt;
 simOpt.gammaIce = gammaIce;
@@ -50,7 +72,7 @@ simOpt.plot = showMainPlot;
 simOpt.verbose = showInformation;
 
 
-%% 5. 调用含冰模型
+%% 7. 调用含冰模型
 
 codeDir = fileparts(mfilename('fullpath'));
 addpath(codeDir);
@@ -67,13 +89,16 @@ for temperatureC = temperatureCases
 end
 
 
-%% 6. 汇总最终结果
+%% 8. 汇总最终结果
 
 nCase = numel(temperatureCases);
 finalVoltage = zeros(nCase,1);
 finalTemperatureC = zeros(nCase,1);
 finalIceMassPerArea = zeros(nCase,1);
 finalIceSaturationCCL = zeros(nCase,1);
+finalIceVolumeFractionCCL = zeros(nCase,1);
+maximumIceVolumeFraction = zeros(nCase,1);
+finalHydrationAreaFactor = zeros(nCase,1);
 
 for k = 1:nCase
     caseName = sprintf('T%d',abs(temperatureCases(k)));
@@ -83,18 +108,26 @@ for k = 1:nCase
     finalTemperatureC(k) = currentResult.TavgC(end);
     finalIceMassPerArea(k) = currentResult.iceMassPerArea(end);
     finalIceSaturationCCL(k) = currentResult.iceSaturationCCL(end);
+    finalIceVolumeFractionCCL(k) = currentResult.iceVolumeFractionCCL(end);
+    maximumIceVolumeFraction(k) = max(currentResult.maxIceVolumeFraction);
+    finalHydrationAreaFactor(k) = currentResult.hydrationAreaFactor(end);
 end
 
 summaryTable = table(temperatureCases(:),finalVoltage,finalTemperatureC, ...
-    finalIceMassPerArea,finalIceSaturationCCL, ...
+    finalIceMassPerArea,finalIceVolumeFractionCCL, ...
+    maximumIceVolumeFraction,finalIceSaturationCCL, ...
+    finalHydrationAreaFactor, ...
     'VariableNames',{'CaseTemperatureC','FinalVoltageV', ...
-    'FinalTemperatureC','FinalIceMassKgM2','FinalCCLIceSaturation'});
+    'FinalTemperatureC','FinalIceMassKgM2', ...
+    'FinalCCLIceVolumeFraction','MaximumIceVolumeFraction', ...
+    'FinalCCLIceSaturation', ...
+    'FinalHydrationAreaFactor'});
 
 fprintf('\n========== 含冰模型计算汇总 ==========\n');
 disp(summaryTable);
 
 
-%% 7. 提取各项电压及损失
+%% 9. 提取各项电压及损失
 % 利用已保存的状态重新调用RHS，只读取代数输出，不重复积分。
 
 voltageLosses = struct();
@@ -108,6 +141,10 @@ for k = 1:nCase
     Erev = zeros(nTime,1);
     etaAct = zeros(nTime,1);
     etaOhm = zeros(nTime,1);
+    etaOhmPEM = zeros(nTime,1);
+    etaOhmACL = zeros(nTime,1);
+    etaOhmCCL = zeros(nTime,1);
+    etaOhmContact = zeros(nTime,1);
     etaCon = zeros(nTime,1);
 
     for n = 1:nTime
@@ -116,6 +153,10 @@ for k = 1:nCase
         Erev(n) = rhsOut.voltage.Erev;
         etaAct(n) = rhsOut.voltage.etaAct;
         etaOhm(n) = rhsOut.voltage.etaOhm;
+        etaOhmPEM(n) = rhsOut.voltage.etaOhmPEM;
+        etaOhmACL(n) = rhsOut.voltage.etaOhmACL;
+        etaOhmCCL(n) = rhsOut.voltage.etaOhmCCL;
+        etaOhmContact(n) = rhsOut.voltage.etaOhmContact;
         etaCon(n) = rhsOut.voltage.etaCon;
     end
 
@@ -123,8 +164,18 @@ for k = 1:nCase
     voltageLosses.(caseName).Erev = Erev;
     voltageLosses.(caseName).etaAct = etaAct;
     voltageLosses.(caseName).etaOhm = etaOhm;
+    % [FIX-5] 保存欧姆损失的四个组成，便于定位快速升流误差。
+    voltageLosses.(caseName).etaOhmPEM = etaOhmPEM;
+    voltageLosses.(caseName).etaOhmACL = etaOhmACL;
+    voltageLosses.(caseName).etaOhmCCL = etaOhmCCL;
+    voltageLosses.(caseName).etaOhmContact = etaOhmContact;
     voltageLosses.(caseName).etaCon = etaCon;
     voltageLosses.(caseName).lambdaMean = currentResult.lambdaMean;
+    voltageLosses.(caseName).lambdaCCL = currentResult.lambdaCCL;
+    voltageLosses.(caseName).hydrationDegree = ...
+        currentResult.hydrationDegree;
+    voltageLosses.(caseName).hydrationAreaFactor = ...
+        currentResult.hydrationAreaFactor;
     voltageLosses.(caseName).VcellReconstructed = ...
         Erev-etaAct-etaOhm-etaCon;
     voltageLosses.(caseName).maxReconstructionError = max(abs( ...
@@ -132,7 +183,7 @@ for k = 1:nCase
 end
 
 
-%% 8. 新增绘图：可逆电压、三种电压损失和膜含水量
+%% 10. 新增绘图：可逆电压、三种电压损失和含水量
 % 一张figure中使用五个子图；每个子图对比所选温度工况。
 
 if showVoltageLossPlot
@@ -162,19 +213,26 @@ if showVoltageLossPlot
         grid on;
     end
 
-    % 底部横跨两列绘制PEM平均含水量lambda。
+    % 底部横跨两列：实线为PEM平均lambda，虚线为cCL离聚物lambda。
     nexttile([1,2]);
     hold on;
+    plotColors = lines(nCase);
+    lambdaLegend = cell(1,2*nCase);
     for k = 1:nCase
         caseName = sprintf('T%d',abs(temperatureCases(k)));
         currentLoss = voltageLosses.(caseName);
-        plot(currentLoss.time,currentLoss.lambdaMean,'LineWidth',1.5);
+        plot(currentLoss.time,currentLoss.lambdaMean,'-', ...
+            'Color',plotColors(k,:),'LineWidth',1.5);
+        plot(currentLoss.time,currentLoss.lambdaCCL,'--', ...
+            'Color',plotColors(k,:),'LineWidth',1.5);
+        lambdaLegend{2*k-1} = sprintf('%d ^\circC PEM',temperatureCases(k));
+        lambdaLegend{2*k} = sprintf('%d ^\circC cCL',temperatureCases(k));
     end
     xlabel('Time / s');
     ylabel('\lambda / -');
-    title('Mean membrane water content \lambda');
-    legend(caseLegend,'Location','best');
+    title('PEM and cCL ionomer water content \lambda');
+    legend(lambdaLegend,'Location','best');
     grid on;
 
-    sgtitle('Reversible voltage, voltage losses and membrane water content');
+    sgtitle('Reversible voltage, voltage losses and ionomer water content');
 end

@@ -1,29 +1,45 @@
 %-------------------------------------------------------------------------------
-% @function: 计算总水守恒、冰守恒以及水在气/液/冰三相间的分配
+% @function: 计算总水守恒、cCL水合、冰守恒以及水在各相间的分配
 % @author:   PJ, GPT
 % @date:     20260923
 % @input:    T->温度状态 [K]
-%            mw->总水质量浓度，mw=mv+ml+mi [kg/m^3]
+%            mw->总水质量浓度；cCL中mw=mIon+mv+ml+mi [kg/m^3]
 %            mi->四个多孔层中的冰质量浓度 [kg/m^3]
+%            lambdaCCLState->cCL平均离聚物含水量 [-]
 %            j->电流密度 [A/m^2]
-%            kFreeze,kMelt->冻结/融化速率系数 [1/(K s)]
+%            kFreeze,kMelt->冻结/融化非平衡速率系数 [1/s]
+%            tauHyd->cCL离聚物水合时间常数 [s]
+%            hVaporCathode->cGDL/阴极气道水蒸气传质系数 [m/s]
 %            g,s->网格和状态编号
 % @output:   dmw->总水状态导数 [kg/(m^3 s)]
 %            dmi->冰状态导数 [kg/(m^3 s)]
+%            dlambdaCCL->cCL平均离聚物含水量导数 [1/s]
 %            out->水相、冰相、孔隙率、通量和守恒检查信息
 %
 % [ICE-2] 冰守恒：dmi/dt=Rfreeze-Rmelt；相变不改变总水mw。
 % [ICE-3] 冰体积分数eps_i=mi/rho_i，并从原始孔隙率中直接扣除。
+% [HYD-1] 反应水先参与cCL离聚物水合；只有扣除结合水后的孔隙水
+%   才能成为水蒸气、液水和冰。水合由局部水活度驱动，不使用时间开关。
+% [HYD-2] 低温下cCL离聚物采用温度相关最大非冻结含水量lambdaSat(T)；
+%   达到该上限后的产水才进入孔隙排水和结冰过程。
+% [WATER-1] 水蒸气按Fick定律扩散，液态水按毛细压力梯度排出；不再把
+%   mv+ml整体套用水蒸气扩散系数。
+% [WATER-2] 阴极外边界由“水蒸气浓度恒为0”改为有限传质：
+%   Nout=hVaporCathode*(mv_surface-mv_inlet)。附件1给出干空气入口，
+%   因此mv_inlet=0；但有限h不再把整个阴极外侧当成无限快水汇。
 %-------------------------------------------------------------------------------
 
-function [dmw,dmi,out] = water_ice_state_ice( ...
-    T,mw,mi,j,kFreeze,kMelt,g,~)
+function [dmw,dmi,dlambdaCCL,out] = water_ice_state_ice( ...
+    T,mw,mi,lambdaCCLState,j,kFreeze,kMelt,tauHyd, ...
+    hVaporCathode,g,s)
 
     %% 1. 输入处理
 
     T = T(:);
     mw = max(mw(:),0);  % 仅处理求解器Newton迭代产生的微小负试探值
     miState = max(mi(:),0);
+    lambdaCCLStateRaw = lambdaCCLState;
+    lambdaCCLState = max(lambdaCCLState,0);
 
     R = 8.314;          % [J/(mol K)]
     F = 96485;          % [C/mol]
@@ -31,16 +47,31 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     rhoLiquid = 990;    % [kg/m^3]
     rhoIce = 920;       % [kg/m^3]
     freezingPoint = 273.15; % [K]
+    lambdaScale = 22;
 
     idxPorous = g.idx_porous;
     eps0Layer = [0.8,0.3916,0,0.4207,0.8];
     eps0 = eps0Layer(g.layerId(:)).';
     eps0 = eps0(:);
 
-    % 数值迭代时把冰限制在“现有总水”和“干孔隙容量”以内。
+    % [HYD-1] cCL结合水不占孔隙，也不能冻结。附件1的CL离聚物含量
+    % 为0.3，故单位lambda对应的结合水质量浓度如下。
+    cCLIonomerWaterCoefficient = 0.3*2150*Mw/1.0;
+    lambdaAvailable = min((mw(g.idx_cCL)-miState(s.local.mi_cCL))/ ...
+        cCLIonomerWaterCoefficient);
+    lambdaUpper = min(lambdaScale,max(lambdaAvailable,0));
+    lambdaCCLEval = min(lambdaCCLState,lambdaUpper);
+
+    mIonomer = zeros(g.N,1);
+    mIonomer(g.idx_cCL) = ...
+        cCLIonomerWaterCoefficient*lambdaCCLEval;
+    mPore = zeros(g.N,1);
+    mPore(idxPorous) = max(mw(idxPorous)-mIonomer(idxPorous),0);
+
+    % 数值迭代时把冰限制在“现有孔隙水”和“干孔隙容量”以内。
     % 正常积分结果由守恒方程保证满足该约束，projection仅用于试探状态。
     iceCapacity = rhoIce*eps0(idxPorous);
-    miEval = min(miState,mw(idxPorous));
+    miEval = min(miState,mPore(idxPorous));
     miEval = min(miEval,iceCapacity);
     iceProjectionApplied = any(abs(miEval-miState) > ...
         10*eps(max(max(abs(miState)),1)));
@@ -52,14 +83,17 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     %% 2. 膜含水量
     % 式(21)：lambda=EW*mw/(rho_pem*Mw)
 
-    lambdaPEM = mw(g.idx_PEM)/(2150*Mw);
+    lambdaPEMRaw = mw(g.idx_PEM)/(2150*Mw);
+    % 本构关系的适用范围取0<=lambda<=22；总水状态本身仍保持守恒，
+    % 这里仅限制Newton试探值进入扩散、电导和拖曳公式时的取值。
+    lambdaPEM = min(max(lambdaPEMRaw,0),lambdaScale);
     dxPEM = g.dx(g.idx_PEM);
     lambdaMean = sum(lambdaPEM.*dxPEM)/sum(dxPEM);
 
 
     %% 3. 多孔区域中的气态水、液态水和冰
-    % [ICE-2] 总水定义保持不变：mw=mv+ml+mi。
-    % 先扣除冰得到可迁移水mMobile=mw-mi，再作气/液平衡。
+    % [ICE-2][HYD-1] 非cCL区域mw=mv+ml+mi；cCL区域还要先扣除
+    % 离聚物结合水mIonomer，再以mMobile=mPore-mi作气/液平衡。
     %
     % [ICE-3] 冰占据孔隙：epsAfterIce=eps0-mi/rhoIce。
     % 饱和时同时满足：
@@ -81,10 +115,8 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     sIce = zeros(g.N,1);
     sIce(idxPorous) = eps_i(idxPorous)./eps0(idxPorous);
 
-    mMobile = mw;
-    mMobile(idxPorous) = max(mw(idxPorous)-miEval,0);
-    mPore = zeros(g.N,1);
-    mPore(idxPorous) = mw(idxPorous);
+    mMobile = zeros(g.N,1);
+    mMobile(idxPorous) = max(mPore(idxPorous)-miEval,0);
     epsAfterIce = eps0(idxPorous)-eps_i(idxPorous);
 
     mv = zeros(g.N,1);
@@ -116,21 +148,89 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     end
 
 
-    %% 4. 冻结和融化动力学
-    % [ICE-2] 第一版采用线性过冷/过热驱动力：
-    %   Rfreeze=kFreeze*ml*(Tf-T)_+*(1-si)
-    %   Rmelt  =kMelt*mi*(T-Tf)_+
-    % 其中(1-si)使孔隙接近全冰时冻结速率自然衰减。
+    %% 4. cCL离聚物水合动力学
 
-    remainingPoreFactor = max(1-sIce(idxPorous),0);
-    Rfreeze = kFreeze.*mlPorous.*max(freezingPoint-T(idxPorous),0).* ...
-        remainingPoreFactor;
-    Rmelt = kMelt.*miEval.*max(T(idxPorous)-freezingPoint,0);
+    mSat = zeros(g.N,1);
+    mSat(idxPorous) = eps_g(idxPorous).*A(idxPorous);
+    waterActivity = zeros(g.N,1);
+    validSat = mSat > 0;
+    waterActivity(validSat) = min(max(mv(validSat)./mSat(validSat),0),1);
+    waterActivity(ml > 0) = 1;
+
+    thetaCCLPore = sum(waterActivity(g.idx_cCL).*g.dx(g.idx_cCL))/ ...
+        g.layerThickness(4);
+    thetaMemRight = min(max(lambdaPEM(end)/lambdaScale,0),1);
+    hydrationActivity = max(thetaCCLPore,thetaMemRight);
+    lambdaCCLEquilibrium = lambdaScale*hydrationActivity;
+
+    % [HYD-2] 采用附件给出的Nafion低温最大非冻结膜水含量关系。
+    TCCLMean = sum(T(g.idx_cCL).*g.dx(g.idx_cCL))/g.layerThickness(4);
+    if TCCLMean < 223.15
+        lambdaSaturationCCL = 4.837;
+    elseif TCCLMean < freezingPoint
+        lambdaSaturationCCL = 1/(-1.304+0.01479*TCCLMean- ...
+            3.594e-5*TCCLMean^2);
+    else
+        lambdaSaturationCCL = lambdaScale;
+    end
+    lambdaSaturationCCL = min(max(lambdaSaturationCCL,0),lambdaScale);
+
+    % [HYD-1] 反应生成水在cCL内原位产生，应先有机会进入离聚物，
+    % 不能先被极快的气相扩散清空后再用瞬时孔隙水反推水合量。这里用
+    % 反应产水率限制水合速率，保证结合水增长不会超过实际水源；当已有
+    % 孔隙水时，也允许其按tauHyd被吸收。剩余产水才进入孔隙排水/冻结。
+    reactionWaterRateCCL = Mw*j/(2*F*g.layerThickness(4));
+    if j > 0
+        lambdaCCLTarget = lambdaSaturationCCL;
+    else
+        lambdaCCLTarget = min([lambdaCCLEquilibrium,lambdaUpper, ...
+            lambdaSaturationCCL]);
+    end
+    hydrationKineticRate = ...
+        (lambdaCCLTarget-lambdaCCLStateRaw)/tauHyd;
+    existingPoreSupplyRate = max(lambdaUpper-lambdaCCLStateRaw,0)/tauHyd;
+    productionSupplyRate = reactionWaterRateCCL/ ...
+        cCLIonomerWaterCoefficient;
+    if hydrationKineticRate > 0
+        dlambdaCCL = min(hydrationKineticRate, ...
+            existingPoreSupplyRate+productionSupplyRate);
+    else
+        dlambdaCCL = hydrationKineticRate;
+    end
+    if lambdaCCLStateRaw <= 0 && dlambdaCCL < 0
+        dlambdaCCL = 0;
+    elseif lambdaCCLStateRaw >= lambdaUpper && dlambdaCCL > 0
+        dlambdaCCL = 0;
+    end
+
+
+    %% 5. 冻结和融化动力学
+    % [ICE-2] 按文献中的分段相变关系：
+    %   Rfreeze = kFreeze*rhoLiquid*eps0*epsLiquid, T<=Tf
+    %   Rmelt   = kMelt*rhoIce*epsIce,          T>Tf
+    %
+    % eps0*epsLiquid表示液态水占控制体总体积的比例；epsIce同样
+    % 使用控制体总体积为基准。由于ml和mi均为单位控制体体积内的
+    % 质量浓度，故rhoLiquid*eps0*epsLiquid=ml，rhoIce*epsIce=mi。
+    % 该关系不再显式乘过冷度、过热度或剩余孔隙因子。
+
+    liquidSaturation = mlPorous./(rhoLiquid*eps0(idxPorous));
+    liquidBulkVolumeFraction = eps0(idxPorous).*liquidSaturation;
+    iceBulkVolumeFraction = eps_i(idxPorous);
+
+    freezeRegion = T(idxPorous) <= freezingPoint;
+    meltRegion = ~freezeRegion;
+    Rfreeze = zeros(numel(idxPorous),1);
+    Rmelt = zeros(numel(idxPorous),1);
+    Rfreeze(freezeRegion) = kFreeze*rhoLiquid.* ...
+        liquidBulkVolumeFraction(freezeRegion);
+    Rmelt(meltRegion) = kMelt*rhoIce.* ...
+        iceBulkVolumeFraction(meltRegion);
     dmi = Rfreeze-Rmelt;
 
     % 在状态边界上禁止继续越界；正常状态中这两项不改变动力学。
     atZeroIce = miState <= 0 & dmi < 0;
-    atAllWaterFrozen = miState >= mw(idxPorous) & dmi > 0;
+    atAllWaterFrozen = miState >= mPore(idxPorous) & dmi > 0;
     atFullPore = miState >= iceCapacity & dmi > 0;
     dmi(atZeroIce | atAllWaterFrozen | atFullPore) = 0;
 
@@ -142,9 +242,9 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     RmeltFull(idxPorous) = Rmelt;
 
 
-    %% 5. 分区域水扩散系数
-    % 多孔层只有气态水和液态水能够迁移，因此扩散驱动量使用mw-mi；
-    % 冰质量只通过独立的冰守恒方程变化，不随水扩散通量移动。
+    %% 6. 水蒸气扩散系数
+    % [WATER-1] 多孔层扩散驱动量只使用mv。液水由下一节的毛细通量
+    % 单独输运，冰与离聚物结合水均不随水蒸气扩散移动。
 
     idxA = [g.idx_aGDL;g.idx_aCL];
     idxC = [g.idx_cCL;g.idx_cGDL];
@@ -158,20 +258,29 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
         0.000671.*lambdaPEM.^3;
     Dw(g.idx_PEM) = 1e-10.*exp(2416.* ...
         (1/303.15-1./T(g.idx_PEM))).*lambdaPoly;
-    if any(Dw < 0) || any(~isfinite(Dw))
+    invalidDw = real(Dw) < 0 | ~isfinite(Dw) | abs(imag(Dw)) > 0;
+    if any(invalidDw)
+        badCell = find(invalidDw,1);
         error('water_ice_state_ice:InvalidDiffusivity', ...
-            '水扩散系数出现非法数值。');
+            ['水扩散系数出现非法数值：cell=%d, T=%.6g K, ', ...
+            'Dw=%g, lambdaPEMRaw范围=[%.6g,%.6g]。'], ...
+            badCell,T(badCell),real(Dw(badCell)), ...
+            min(lambdaPEMRaw),max(lambdaPEMRaw));
     end
 
     transportWater = mw;
-    transportWater(idxPorous) = mMobile(idxPorous);
+    transportWater(idxPorous) = mv(idxPorous);
     [JdiffA,diffInfoA] = regional_diffusion( ...
         transportWater(idxA),Dw(idxA),g,idxA,'dirichlet',0,'noflux',0);
     [JdiffM,diffInfoM] = regional_diffusion( ...
         transportWater(g.idx_PEM),Dw(g.idx_PEM),g,g.idx_PEM, ...
         'noflux',0,'noflux',0);
+    % [WATER-2] 干空气是气道外部浓度为0，不等于cGDL边界
+    % 自身浓度始终为0。边界通量由有限传质速率决定。
+    cathodeInletVaporConcentration = 0;
     [JdiffC,diffInfoC] = regional_diffusion( ...
-        transportWater(idxC),Dw(idxC),g,idxC,'noflux',0,'dirichlet',0);
+        transportWater(idxC),Dw(idxC),g,idxC,'noflux',0, ...
+        'mass_transfer',[hVaporCathode,cathodeInletVaporConcentration]);
 
     Ndiff = zeros(g.N+1,1);
     Ndiff(idxA(1):idxA(end)+1) = JdiffA;
@@ -179,16 +288,7 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     Ndiff(idxC(1):idxC(end)+1) = JdiffC;
 
 
-    %% 6. CL/PEM有限速率界面通量
-
-    mSat = zeros(g.N,1);
-    mSat(idxPorous) = eps_g(idxPorous).*A(idxPorous);
-    waterActivity = zeros(g.N,1);
-    validSat = mSat > 0;
-    waterActivity(validSat) = min(max(mv(validSat)./mSat(validSat),0),1);
-    waterActivity(ml > 0) = 1;
-
-    lambdaScale = 22;
+    %% 7. CL/PEM有限速率界面通量
     thetaACL = waterActivity(g.idx_aCL(end));
     thetaCCL = waterActivity(g.idx_cCL(1));
     thetaMemLeft = min(max(lambdaPEM(1)/lambdaScale,0),1);
@@ -202,16 +302,62 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     driveRight = thetaMemRight-thetaCCL;
 
     % [FIX-1] 去除原先吸附为1、解吸为0.001的单向阀式修正。
-    % 两个方向统一使用同一个有限速率界面导通关系，避免水只容易进入
-    % PEM而几乎不能返回CL。后续若有界面动力学实验，再单独标定系数。
-    factorLeft = 1.0;
-    factorRight = 1.0;
+    % 两个方向统一使用同一个有限速率界面导通关系。
+    % 当前30为待核对值，不作为新的独立标定参数。
+    factorLeft = 30;
+    factorRight = 30;
 
     Ndiff(g.face_aCL_PEM) = Gleft*factorLeft*driveLeft;
     Ndiff(g.face_PEM_cCL) = Gright*factorRight*driveRight;
 
 
-    %% 7. 质子电流和电渗拖曳水通量
+    %% 8. 液态水毛细排水
+
+    % [WATER-1] Darcy/Leverett关系：
+    %   Nl=-rhoL*Keff*krl/muL*grad(pc)
+    %   pc=-sigma*cos(theta)*sqrt(eps0/K0)*J(sL)
+    % 其中K0和接触角直接采用附件1中GDL/CL的数值。
+    liquidSaturationCapillary = zeros(g.N,1);
+    liquidSaturationCapillary(idxPorous) = min(max(mlPorous./ ...
+        (rhoLiquid*max(epsAfterIce,1e-12)),0),1);
+
+    intrinsicPermeabilityLayer = [6.2e-12,6.2e-13,0,6.2e-13,6.2e-12];
+    contactAngleLayer = [110,100,0,100,110];
+    K0 = intrinsicPermeabilityLayer(g.layerId(:)).';
+    K0 = K0(:);
+    contactAngle = contactAngleLayer(g.layerId(:)).';
+    contactAngle = contactAngle(:);
+
+    Keff = zeros(g.N,1);
+    relativePermeability = zeros(g.N,1);
+    capillaryPressure = zeros(g.N,1);
+    liquidMobility = zeros(g.N,1);
+    porosityRatio = max((eps0(idxPorous)-eps_i(idxPorous))./ ...
+        eps0(idxPorous),0);
+    Keff(idxPorous) = K0(idxPorous).*porosityRatio.^3;
+    relativePermeability(idxPorous) = ...
+        liquidSaturationCapillary(idxPorous).^3;
+    leverett = 1.417*liquidSaturationCapillary(idxPorous)- ...
+        2.12*liquidSaturationCapillary(idxPorous).^2+ ...
+        1.263*liquidSaturationCapillary(idxPorous).^3;
+    capillaryPressure(idxPorous) = -0.075.*cosd(contactAngle(idxPorous)).* ...
+        sqrt(eps0(idxPorous)./K0(idxPorous)).*leverett;
+    liquidViscosity = 2.414e-5.*10.^(247.8./(T-140));
+    liquidMobility(idxPorous) = rhoLiquid.*Keff(idxPorous).* ...
+        relativePermeability(idxPorous)./liquidViscosity(idxPorous);
+
+    [JliqA,capillaryInfoA] = regional_capillary_flux( ...
+        capillaryPressure(idxA),liquidMobility(idxA),g,idxA, ...
+        'dirichlet',0,'noflux',0);
+    [JliqC,capillaryInfoC] = regional_capillary_flux( ...
+        capillaryPressure(idxC),liquidMobility(idxC),g,idxC, ...
+        'noflux',0,'dirichlet',0);
+    Nliq = zeros(g.N+1,1);
+    Nliq(idxA(1):idxA(end)+1) = JliqA;
+    Nliq(idxC(1):idxC(end)+1) = JliqC;
+
+
+    %% 9. 质子电流和电渗拖曳水通量
 
     imCell = zeros(g.N,1);
     xiA = (g.x(g.idx_aCL)-g.layerBoundary(2))/g.layerThickness(2);
@@ -230,7 +376,7 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     lambdaCell = zeros(g.N,1);
     lambdaCell(g.idx_aCL) = lambdaPEM(1);
     lambdaCell(g.idx_PEM) = lambdaPEM;
-    lambdaCell(g.idx_cCL) = lambdaPEM(end);
+    lambdaCell(g.idx_cCL) = lambdaCCLEval;
     lambdaFace = zeros(g.N+1,1);
     lambdaFace(1) = lambdaCell(1);
     lambdaFace(end) = lambdaCell(end);
@@ -245,22 +391,30 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
         imFace(activeEodFaces)/F;
 
 
-    %% 8. 总水守恒方程
+    %% 10. 总水守恒方程
     % [ICE-2] 相变只在mv/ml/mi之间重新分配，不是总水的源项：
     %   dmw/dt=-div(Nw)+Sw
 
-    Nw = Ndiff+Neod;
+    Nw = Ndiff+Nliq+Neod;
     Sw = zeros(g.N,1);
     Sw(g.idx_cCL) = Mw*j/(2*F*g.layerThickness(4));
     dmw = (Nw(1:end-1)-Nw(2:end))./g.dx + Sw;
 
+    dmIonomer = zeros(g.N,1);
+    dmIonomer(g.idx_cCL) = ...
+        cCLIonomerWaterCoefficient*dlambdaCCL;
+    dmPore = dmw-dmIonomer;
 
-    %% 9. 守恒检查和输出
+
+    %% 11. 守恒检查和输出
 
     diffInfo = flux_balance(Ndiff,g.dx);
     diffInfo.anodeRegion = diffInfoA;
     diffInfo.membraneRegion = diffInfoM;
     diffInfo.cathodeRegion = diffInfoC;
+    capillaryInfo = flux_balance(Nliq,g.dx);
+    capillaryInfo.anodeRegion = capillaryInfoA;
+    capillaryInfo.cathodeRegion = capillaryInfoC;
 
     isFace = j-imFace;
     isCell = j-imCell;
@@ -281,6 +435,7 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
 
     out.Nw = Nw;
     out.Ndiff = Ndiff;
+    out.Nliq = Nliq;
     out.Neod = Neod;
     out.Dw = Dw;
     out.mv = mv;
@@ -288,17 +443,42 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     out.miFull = miFull;
     out.mMobile = mMobile;
     out.mPore = mPore;
+    out.mIonomer = mIonomer;
+    out.dmIonomer = dmIonomer;
+    out.dmPore = dmPore;
     out.eps_g = eps_g;
     out.eps_i = eps_i;
+    % [ICE-3a] 题目式(9)的冰体积分数，以控制体总体积为基准。
+    out.iceVolumeFraction = eps_i;
+    % sIce为孔隙内冰饱和度，只用于堵孔及有效面积修正。
     out.sIce = sIce;
     out.lambdaPEM = lambdaPEM;
+    out.lambdaPEMRaw = lambdaPEMRaw;
     out.lambdaMean = lambdaMean;
+    out.lambdaCCL = lambdaCCLEval;
+    out.lambdaCCLState = lambdaCCLStateRaw;
+    out.lambdaCCLEquilibrium = lambdaCCLEquilibrium;
+    out.lambdaCCLTarget = lambdaCCLTarget;
+    out.lambdaSaturationCCL = lambdaSaturationCCL;
+    out.dlambdaCCL = dlambdaCCL;
+    out.tauHyd = tauHyd;
+    out.cCLIonomerWaterCoefficient = cCLIonomerWaterCoefficient;
+    out.hydrationActivity = hydrationActivity;
+    out.hydrationKineticRate = hydrationKineticRate;
+    out.hydrationProductionSupplyRate = productionSupplyRate;
+    out.hydrationExistingPoreSupplyRate = existingPoreSupplyRate;
     out.nd = (2.5/22)*lambdaMean;
     out.ndFace = ndFace;
     out.lambdaFace = lambdaFace;
     out.imCell = imCell;
     out.imFace = imFace;
     out.diffusionInfo = diffInfo;
+    out.capillaryInfo = capillaryInfo;
+    out.capillaryPressure = capillaryPressure;
+    out.liquidMobility = liquidMobility;
+    out.liquidSaturationCapillary = liquidSaturationCapillary;
+    out.relativePermeability = relativePermeability;
+    out.effectiveLiquidPermeability = Keff;
     out.waterActivity = waterActivity;
     out.interfaceActivity.aCL = thetaACL;
     out.interfaceActivity.PEMLeft = thetaMemLeft;
@@ -313,12 +493,21 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     out.interfaceFlux.aCL_PEM_total = Nw(g.face_aCL_PEM);
     out.interfaceFlux.PEM_cCL_total = Nw(g.face_PEM_cCL);
     out.interfaceModel = ...
-        'conservative finite-rate CL/PEM exchange with regional diffusion + local EOD';
+        'finite-rate CL/PEM exchange + vapor diffusion + capillary liquid drainage + local EOD';
+    out.vaporBoundary.model = ...
+        'finite mass transfer from cGDL to dry cathode channel';
+    out.vaporBoundary.massTransferCoefficient = hVaporCathode;
+    out.vaporBoundary.externalConcentration = ...
+        cathodeInletVaporConcentration;
+    out.vaporBoundary.outwardFlux = JdiffC(end);
     out.currentInfo = currentInfo;
     out.Sw = Sw;
     out.dmiFull = dmiFull;
     out.Rfreeze = RfreezeFull;
     out.Rmelt = RmeltFull;
+    out.liquidSaturation = liquidSaturation;
+    out.liquidBulkVolumeFraction = liquidBulkVolumeFraction;
+    out.iceBulkVolumeFraction = iceBulkVolumeFraction;
     out.kFreeze = kFreeze;
     out.kMelt = kMelt;
     out.rhoIce = rhoIce;
@@ -335,6 +524,59 @@ function [dmw,dmi,out] = water_ice_state_ice( ...
     out.reaction.errorWater = ...
         out.reaction.WaterGeneration_Area-out.reaction.WaterExpected;
 
+end
+
+
+%% ========================================================================
+% 局部函数：液态水毛细通量
+% 干湿前沿若使用扩散型调和平均，干侧零迁移率会把液水永久锁死。
+% Darcy通量按压力梯度定方向，并使用上游（流出侧）迁移率。
+% ========================================================================
+
+function [Jface,info] = regional_capillary_flux(pc,mobility,g,idx, ...
+    leftType,leftValue,rightType,rightValue)
+
+    pc = pc(:);
+    mobility = mobility(:);
+    idx = idx(:);
+    N = numel(idx);
+    Jface = zeros(N+1,1);
+
+    for f = 2:N
+        gradient = (pc(f)-pc(f-1))/(g.x(idx(f))-g.x(idx(f-1)));
+        if gradient <= 0
+            mobilityFace = mobility(f-1);
+        else
+            mobilityFace = mobility(f);
+        end
+        Jface(f) = -mobilityFace*gradient;
+    end
+
+    if strcmp(leftType,'dirichlet')
+        gradient = (pc(1)-leftValue)/(g.x(idx(1))-g.xf(idx(1)));
+        if gradient > 0
+            mobilityFace = mobility(1);
+        else
+            mobilityFace = 0;
+        end
+        Jface(1) = -mobilityFace*gradient;
+    elseif strcmp(leftType,'neumann') || strcmp(leftType,'noflux')
+        Jface(1) = leftValue;
+    end
+
+    if strcmp(rightType,'dirichlet')
+        gradient = (rightValue-pc(end))/(g.xf(idx(end)+1)-g.x(idx(end)));
+        if gradient < 0
+            mobilityFace = mobility(end);
+        else
+            mobilityFace = 0;
+        end
+        Jface(end) = -mobilityFace*gradient;
+    elseif strcmp(rightType,'neumann') || strcmp(rightType,'noflux')
+        Jface(end) = rightValue;
+    end
+
+    info = flux_balance(Jface,g.dx(idx));
 end
 
 
@@ -365,14 +607,19 @@ function [Jface,info] = regional_diffusion(phi,D,g,idx, ...
     if strcmp(leftType,'dirichlet') && D(1) ~= 0
         d = g.x(idx(1))-g.xf(idx(1));
         Jface(1) = -D(1)*(phi(1)-leftValue)/d;
-    elseif strcmp(leftType,'neumann')
+    elseif strcmp(leftType,'neumann') || strcmp(leftType,'noflux')
         Jface(1) = leftValue;
     end
 
     if strcmp(rightType,'dirichlet') && D(end) ~= 0
         d = g.xf(idx(end)+1)-g.x(idx(end));
         Jface(end) = -D(end)*(rightValue-phi(end))/d;
-    elseif strcmp(rightType,'neumann')
+    elseif strcmp(rightType,'mass_transfer')
+        % 右边界正方向为流出计算区域。rightValue=[h,phiExternal]。
+        h = rightValue(1);
+        phiExternal = rightValue(2);
+        Jface(end) = h*(phi(end)-phiExternal);
+    elseif strcmp(rightType,'neumann') || strcmp(rightType,'noflux')
         Jface(end) = rightValue;
     end
 

@@ -10,11 +10,17 @@
 %                    .tEnd     结束时间，默认附件2全部36.6 s
 %                    .plot     是否绘图，默认false
 %                    .verbose  是否显示计算信息，默认true
-%                    .j0Ref    298.15 K参考交换电流密度，默认0.0080757935 A/m^2
-%                    .Ea       活化能，默认22204.0159 J/mol
-%                    .kFreeze  冻结系数，默认0.01 [1/(K s)]（待标定）
-%                    .kMelt    融化系数，默认0.01 [1/(K s)]（待标定）
-%                    .gammaIce 冰覆盖修正指数，默认3.5（待标定）
+%                    .j0Ref    充分水合时298.15 K参考交换电流密度
+%                    .Ea       活化能，默认7028.9809 J/mol
+%                    .tauHyd   cCL离聚物水合时间常数，默认10 s
+%                    .hVaporCathode cGDL/阴极气道水蒸气传质系数 [m/s]
+%                    .fHydDry  干态cCL可利用反应面积比例
+%                    .lambdaHydOn  水合面积开始恢复的lambda
+%                    .lambdaHydWet 水合面积完全恢复的lambda
+%                    .nHyd     水合面积恢复指数
+%                    .kFreeze  冻结系数，默认1 [1/s]（文献量级，待标定）
+%                    .kMelt    融化系数，默认0 [1/s]（本组低温数据不可辨识）
+%                    .gammaIce 冰覆盖修正指数，默认0.1（弱正耦合）
 %                    .init     可选初值结构体，传给pemfc_setup_ice
 % @output:   result->时间、状态、电压、温度、冰量和实验对比结果
 %            model->网格、状态编号、初值、输入和RHS函数句柄
@@ -22,7 +28,7 @@
 % 使用示例：
 %   result20 = pemfc_calculate_ice(-20);
 %   result25 = pemfc_calculate_ice(-25,struct('plot',true));
-%   opt = struct('kFreeze',0.02,'gammaIce',4,'tEnd',10);
+%   opt = struct('kFreeze',1,'gammaIce',4,'tEnd',10);
 %   result20 = pemfc_calculate_ice(-20,opt);
 %-------------------------------------------------------------------------------
 
@@ -49,17 +55,28 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     if ~isfield(simOpt,'verbose'), simOpt.verbose = true; end
     if ~isfield(simOpt,'init') || isempty(simOpt.init), simOpt.init = struct(); end
 
-    % [ACT-1] 由-20/-25 degC两个零时刻电压联合反算，避免冰和后续
-    % 传质过程干扰活化参数。二者仍保留为simOpt输入，便于继续标定。
-    if ~isfield(simOpt,'j0Ref'), simOpt.j0Ref = 0.00807579349527; end
-    if ~isfield(simOpt,'Ea'), simOpt.Ea = 22204.0159133; end
+    % [ACT-2][HYD-3] j0Ref改为充分水合时的本征参考值。零时刻有效
+    % 交换电流密度由j0Ref*fHydDry给出，水合后逐步恢复至j0Ref。
+    if ~isfield(simOpt,'j0Ref'), simOpt.j0Ref = 0.0827422651388; end
+    if ~isfield(simOpt,'Ea'), simOpt.Ea = 7028.980902; end
+
+    % [HYD-1] cCL离聚物由反应水逐步水合，tauHyd控制CL质子电阻
+    % 从“启动初期较高”向“水合后较低”过渡的时间尺度。
+    if ~isfield(simOpt,'tauHyd'), simOpt.tauHyd = 10; end
+    % [WATER-2] 有限阴极排水边界。附件1没有气道流量和几何参数，
+    % 因此用一个可单独标定的总体传质系数表示cGDL到干空气的阻力。
+    if ~isfield(simOpt,'hVaporCathode'), simOpt.hVaporCathode = 0.01; end
+    if ~isfield(simOpt,'fHydDry'), simOpt.fHydDry = 0.06; end
+    if ~isfield(simOpt,'lambdaHydOn'), simOpt.lambdaHydOn = 3.5; end
+    if ~isfield(simOpt,'lambdaHydWet'), simOpt.lambdaHydWet = 8; end
+    if ~isfield(simOpt,'nHyd'), simOpt.nHyd = 3; end
 
     % 以下三个量是第一版冰模型唯一集中暴露的待标定量，并非已辨识结果。
     % [ICE-2] 冻结/融化相变参数
-    if ~isfield(simOpt,'kFreeze'), simOpt.kFreeze = 0.01; end
-    if ~isfield(simOpt,'kMelt'), simOpt.kMelt = 0.01; end
+    if ~isfield(simOpt,'kFreeze'), simOpt.kFreeze = 1; end
+    if ~isfield(simOpt,'kMelt'), simOpt.kMelt = 0; end
     % [ICE-4] cCL冰覆盖对有效反应面积的修正指数
-    if ~isfield(simOpt,'gammaIce'), simOpt.gammaIce = 3.5; end
+    if ~isfield(simOpt,'gammaIce'), simOpt.gammaIce = 0.1; end
 
     if ~isscalar(simOpt.RelTol) || simOpt.RelTol <= 0 || ...
             ~isscalar(simOpt.AbsTol) || simOpt.AbsTol <= 0 || ...
@@ -72,6 +89,29 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
             ~isfinite(simOpt.Ea) || simOpt.Ea < 0
         error('pemfc_calculate_ice:InvalidActivationParameters', ...
             'j0Ref必须为正有限标量，Ea必须为非负有限标量。');
+    end
+    if ~isscalar(simOpt.tauHyd) || ~isfinite(simOpt.tauHyd) || ...
+            simOpt.tauHyd <= 0
+        error('pemfc_calculate_ice:InvalidHydrationParameter', ...
+            'tauHyd必须是正有限标量。');
+    end
+    if ~isscalar(simOpt.hVaporCathode) || ...
+            ~isfinite(simOpt.hVaporCathode) || simOpt.hVaporCathode < 0
+        error('pemfc_calculate_ice:InvalidVaporBoundaryParameter', ...
+            'hVaporCathode必须是非负有限标量。');
+    end
+    if ~isscalar(simOpt.fHydDry) || ~isfinite(simOpt.fHydDry) || ...
+            simOpt.fHydDry <= 0 || simOpt.fHydDry > 1 || ...
+            ~isscalar(simOpt.lambdaHydOn) || ...
+            ~isfinite(simOpt.lambdaHydOn) || simOpt.lambdaHydOn < 0 || ...
+            ~isscalar(simOpt.lambdaHydWet) || ...
+            ~isfinite(simOpt.lambdaHydWet) || ...
+            simOpt.lambdaHydWet <= simOpt.lambdaHydOn || ...
+            ~isscalar(simOpt.nHyd) || ~isfinite(simOpt.nHyd) || ...
+            simOpt.nHyd <= 0
+        error('pemfc_calculate_ice:InvalidHydrationAreaParameters', ...
+            ['fHydDry必须在(0,1]内，lambdaHydOn必须非负，', ...
+             'lambdaHydWet必须大于lambdaHydOn，nHyd必须为正数。']);
     end
     if ~isscalar(simOpt.kFreeze) || ~isfinite(simOpt.kFreeze) || ...
             simOpt.kFreeze < 0 || ~isscalar(simOpt.kMelt) || ...
@@ -154,6 +194,12 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     ice.gammaIce = simOpt.gammaIce;
     activation.j0Ref = simOpt.j0Ref;
     activation.Ea = simOpt.Ea;
+    activation.fHydDry = simOpt.fHydDry;
+    activation.lambdaHydOn = simOpt.lambdaHydOn;
+    activation.lambdaHydWet = simOpt.lambdaHydWet;
+    activation.nHyd = simOpt.nHyd;
+    hydration.tauHyd = simOpt.tauHyd;
+    transport.hVaporCathode = simOpt.hVaporCathode;
 
     tOutput = profile.time(profile.time <= simOpt.tEnd);
     if tOutput(end) < simOpt.tEnd
@@ -163,7 +209,8 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
 
     %% 5. 调用刚性求解器
 
-    nonNegativeStates = [s.idx.H2(:);s.idx.O2(:);s.idx.mw(:);s.idx.mi(:)];
+    nonNegativeStates = [s.idx.H2(:);s.idx.O2(:);s.idx.mw(:);s.idx.mi(:); ...
+        s.idx.lambdaCCL(:)];
     odeOpt = odeset( ...
         'RelTol',simOpt.RelTol, ...
         'AbsTol',simOpt.AbsTol, ...
@@ -174,13 +221,21 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
         fprintf('\n开始计算含冰模型%d degC工况：%.3f-%.3f s\n', ...
             temperatureC,tOutput(1),tOutput(end));
         fprintf(['冰参数（当前为待标定初值）：kFreeze=%.6g, ', ...
-            'kMelt=%.6g 1/(K s), gammaIce=%.6g\n'], ...
+            'kMelt=%.6g 1/s, gammaIce=%.6g\n'], ...
             ice.kFreeze,ice.kMelt,ice.gammaIce);
-        fprintf('活化参数：j0Ref=%.9g A/m^2, Ea=%.6f kJ/mol\n', ...
+        fprintf('湿态活化参数：j0Ref=%.9g A/m^2, Ea=%.6f kJ/mol\n', ...
             activation.j0Ref,activation.Ea/1000);
+        fprintf('cCL水合参数：tauHyd=%.6g s, lambdaCCL0=%.6g\n', ...
+            hydration.tauHyd,init.lambdaCCL0);
+        fprintf('阴极有限排水边界：hVaporCathode=%.6g m/s\n', ...
+            transport.hVaporCathode);
+        fprintf(['水合反应面积：fHydDry=%.6g, lambdaOn=%.6g, ', ...
+            'lambdaWet=%.6g, nHyd=%.6g\n'],activation.fHydDry, ...
+            activation.lambdaHydOn,activation.lambdaHydWet,activation.nHyd);
     end
 
-    rhs = @(t,x) model_rhs_ice(t,x,u,ice,activation,g,s);
+    rhs = @(t,x) model_rhs_ice( ...
+        t,x,u,ice,hydration,activation,transport,g,s);
     tic;
     [tSol,xSol] = ode15s(rhs,tOutput,x0,odeOpt);
     cpuTime = toc;
@@ -194,6 +249,11 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     Tmin = zeros(Nt,1);
     Tmax = zeros(Nt,1);
     lambdaMean = zeros(Nt,1);
+    lambdaCCL = zeros(Nt,1);
+    lambdaCCLEquilibrium = zeros(Nt,1);
+    lambdaSaturationCCL = zeros(Nt,1);
+    cCLIonomerWaterMassPerArea = zeros(Nt,1);
+    cCLLiquidWaterMassPerArea = zeros(Nt,1);
     currentDensity = zeros(Nt,1);
     jLim = zeros(Nt,1);
     minH2 = zeros(Nt,1);
@@ -203,17 +263,32 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     iceMassPerArea = zeros(Nt,1);
     maxIceSaturation = zeros(Nt,1);
     iceSaturationCCL = zeros(Nt,1);
+    maxIceVolumeFraction = zeros(Nt,1);
+    iceVolumeFractionCCL = zeros(Nt,1);
     iceAreaFactor = zeros(Nt,1);
+    hydrationDegree = zeros(Nt,1);
+    hydrationAreaFactor = zeros(Nt,1);
     latentHeatPerArea = zeros(Nt,1);
+    waterMassPerArea = zeros(Nt,1);
+    reactionWaterFlux = zeros(Nt,1);
+    netBoundaryWaterInflux = zeros(Nt,1);
+    cathodeVaporOutflux = zeros(Nt,1);
 
     for k = 1:Nt
         [~,out] = model_rhs_ice( ...
-            tSol(k),xSol(k,:).',u,ice,activation,g,s);
+            tSol(k),xSol(k,:).',u,ice,hydration,activation,transport,g,s);
         Vcell(k) = out.Vcell;
         Tavg(k) = out.Tavg;
         Tmin(k) = out.Tmin;
         Tmax(k) = out.Tmax;
         lambdaMean(k) = out.lambdaMean;
+        lambdaCCL(k) = out.lambdaCCL;
+        lambdaCCLEquilibrium(k) = out.lambdaCCLEquilibrium;
+        lambdaSaturationCCL(k) = out.water.lambdaSaturationCCL;
+        cCLIonomerWaterMassPerArea(k) = sum( ...
+            out.water.mIonomer(g.idx_cCL).*g.dx(g.idx_cCL));
+        cCLLiquidWaterMassPerArea(k) = sum( ...
+            out.water.ml(g.idx_cCL).*g.dx(g.idx_cCL));
         currentDensity(k) = out.j;
         jLim(k) = out.jLim;
         minH2(k) = out.minH2;
@@ -223,8 +298,18 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
         iceMassPerArea(k) = sum(out.water.miFull.*g.dx);
         maxIceSaturation(k) = max(out.water.sIce);
         iceSaturationCCL(k) = out.iceSaturationCCL;
+        maxIceVolumeFraction(k) = max(out.water.iceVolumeFraction);
+        iceVolumeFractionCCL(k) = sum( ...
+            out.water.iceVolumeFraction(g.idx_cCL).*g.dx(g.idx_cCL))/ ...
+            g.layerThickness(4);
         iceAreaFactor(k) = out.iceAreaFactor;
+        hydrationDegree(k) = out.hydrationDegree;
+        hydrationAreaFactor(k) = out.hydrationAreaFactor;
         latentHeatPerArea(k) = sum(out.qPhase.*g.dx);
+        waterMassPerArea(k) = sum(xSol(k,s.idx.mw).'.*g.dx);
+        reactionWaterFlux(k) = out.water.reaction.WaterExpected;
+        netBoundaryWaterInflux(k) = out.water.Nw(1)-out.water.Nw(end);
+        cathodeVaporOutflux(k) = out.water.vaporBoundary.outwardFlux;
     end
 
     experimentVoltage = interp1(profile.time,profile.voltage,tSol,'linear');
@@ -243,6 +328,12 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     result.Tmin = Tmin;
     result.Tmax = Tmax;
     result.lambdaMean = lambdaMean;
+    result.lambdaCCL = lambdaCCL;
+    result.lambdaCCLState = xSol(:,s.idx.lambdaCCL);
+    result.lambdaCCLEquilibrium = lambdaCCLEquilibrium;
+    result.lambdaSaturationCCL = lambdaSaturationCCL;
+    result.cCLIonomerWaterMassPerArea = cCLIonomerWaterMassPerArea;
+    result.cCLLiquidWaterMassPerArea = cCLLiquidWaterMassPerArea;
     result.currentDensity = currentDensity;
     result.currentDensityAcm2 = currentDensity/1e4;
     result.jLim = jLim;
@@ -254,8 +345,17 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     result.iceMassPerArea = iceMassPerArea;
     result.maxIceSaturation = maxIceSaturation;
     result.iceSaturationCCL = iceSaturationCCL;
+    % [ICE-3a] 题目式(9)的正式输出：冰体积/控制体总体积。
+    result.maxIceVolumeFraction = maxIceVolumeFraction;
+    result.iceVolumeFractionCCL = iceVolumeFractionCCL;
     result.iceAreaFactor = iceAreaFactor;
+    result.hydrationDegree = hydrationDegree;
+    result.hydrationAreaFactor = hydrationAreaFactor;
     result.latentHeatPerArea = latentHeatPerArea;
+    result.waterMassPerArea = waterMassPerArea;
+    result.reactionWaterFlux = reactionWaterFlux;
+    result.netBoundaryWaterInflux = netBoundaryWaterInflux;
+    result.cathodeVaporOutflux = cathodeVaporOutflux;
     result.cpuTime = cpuTime;
     result.experiment = profile;
     result.experimentVoltageAtSolutionTime = experimentVoltage;
@@ -266,18 +366,74 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     result.solver = simOpt;
     result.iceParameters = ice;
     result.activationParameters = activation;
+    result.hydrationParameters = hydration;
+    result.transportParameters = transport;
+
+    % [CHECK-1] 总水面密度应满足：
+    % Delta(Mw/A)=integral[reactionWaterFlux+Nleft-Nright]dt。
+    result.waterBalance.actualChange = ...
+        waterMassPerArea(end)-waterMassPerArea(1);
+    result.waterBalance.expectedChange = trapz(tSol, ...
+        reactionWaterFlux+netBoundaryWaterInflux);
+    result.waterBalance.error = result.waterBalance.actualChange- ...
+        result.waterBalance.expectedChange;
+
+    % [TABLE-1] 直接给出题目表1/表2的8个时刻，避免把孔隙冰饱和度
+    % 误填到“模型最大冰体积分数”一列。
+    reportTime = (0:5:35).';
+    reportTime = reportTime(reportTime <= tSol(end));
+    experimentVoltageReport = interp1( ...
+        profile.time,profile.voltage,reportTime,'linear');
+    modelVoltageReport = interp1(tSol,Vcell,reportTime,'linear');
+    voltageRelativeErrorPercent = 100*abs( ...
+        modelVoltageReport-experimentVoltageReport)./ ...
+        max(abs(experimentVoltageReport),eps);
+    experimentTemperatureReport = interp1( ...
+        profile.time,profile.temperatureC,reportTime,'linear');
+    modelTemperatureReport = interp1(tSol,result.TavgC,reportTime,'linear');
+    temperatureRelativeErrorPercent = 100*abs( ...
+        modelTemperatureReport-experimentTemperatureReport)./ ...
+        max(abs(experimentTemperatureReport),eps);
+    maximumIceVolumeFractionReport = interp1( ...
+        tSol,maxIceVolumeFraction,reportTime,'linear');
+    result.validationTable = table(reportTime,experimentVoltageReport, ...
+        modelVoltageReport,voltageRelativeErrorPercent, ...
+        experimentTemperatureReport,modelTemperatureReport, ...
+        temperatureRelativeErrorPercent,maximumIceVolumeFractionReport, ...
+        'VariableNames',{'TimeS','ExperimentVoltageV','ModelVoltageV', ...
+        'VoltageRelativeErrorPercent','ExperimentTemperatureC', ...
+        'ModelTemperatureC','TemperatureRelativeErrorPercent', ...
+        'MaximumIceVolumeFraction'});
 
     mwPorous = xSol(:,s.idx.mw(g.idx_porous));
     iceState = xSol(:,s.idx.mi);
+    poreWaterPorous = mwPorous;
+    poreWaterPorous(:,s.local.mi_cCL) = ...
+        poreWaterPorous(:,s.local.mi_cCL)- ...
+        init.cCLIonomerWaterCoefficient.*result.lambdaCCLState;
     result.health.allFinite = all(isfinite(xSol(:))) && all(isfinite(Vcell));
     result.health.nonNegativeGasWaterIce = all(minH2 >= -1e-10) && ...
         all(minO2 >= -1e-10) && all(minMw >= -1e-10) && ...
         all(minIce >= -1e-10);
+    result.health.iceNotExceedPoreWater = ...
+        all(iceState(:) <= poreWaterPorous(:)+1e-8);
+    % 保留旧字段名，便于已有脚本继续读取。
     result.health.iceNotExceedTotalWater = ...
-        all(iceState(:) <= mwPorous(:)+1e-8);
+        result.health.iceNotExceedPoreWater;
     result.health.iceSaturationValid = ...
         all(maxIceSaturation >= -1e-10 & maxIceSaturation <= 1+1e-8);
+    eps0Layer = [0.8,0.3916,0,0.4207,0.8];
+    eps0Porous = eps0Layer(g.layerId(g.idx_porous));
+    eps0Porous = eps0Porous(:).';
+    iceVolumeFractionState = iceState/920;
+    result.health.iceVolumeFractionValid = ...
+        all(iceVolumeFractionState(:) >= -1e-10) && ...
+        all(iceVolumeFractionState <= eps0Porous+1e-8,'all');
+    result.health.waterBalanced = abs(result.waterBalance.error) <= ...
+        max(5e-6,1e-3*max(abs(result.waterBalance.expectedChange),eps));
     result.health.currentBelowLimit = all(currentDensity < jLim);
+    result.health.lambdaCCLValid = all(result.lambdaCCLState >= -1e-10 & ...
+        result.lambdaCCLState <= 22+1e-8);
 
     if ~result.health.allFinite
         error('pemfc_calculate_ice:NonFiniteSolution', ...
@@ -291,15 +447,20 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
     model.u = u;
     model.iceParameters = ice;
     model.activationParameters = activation;
+    model.hydrationParameters = hydration;
+    model.transportParameters = transport;
     model.rhs = rhs;
 
     if simOpt.verbose
         fprintf('计算完成：耗时%.3f s，最终电压%.6f V，平均温度%.6f degC\n', ...
             cpuTime,Vcell(end),result.TavgC(end));
-        fprintf('最终冰面密度%.6e kg/m^2，cCL平均冰饱和度%.6f\n', ...
-            iceMassPerArea(end),iceSaturationCCL(end));
+        fprintf(['最终冰面密度%.6e kg/m^2，cCL平均冰体积分数%.6f，', ...
+            '孔隙冰饱和度%.6f\n'],iceMassPerArea(end), ...
+            iceVolumeFractionCCL(end),iceSaturationCCL(end));
         fprintf('实验对比：电压RMSE=%.6e V，温度RMSE=%.6e degC\n', ...
             result.voltageRMSE,result.temperatureRMSE);
+        fprintf('总水守恒误差=%.3e kg/m^2\n',result.waterBalance.error);
+        disp(result.validationTable);
     end
 
 
@@ -329,9 +490,9 @@ function [result,model] = pemfc_calculate_ice(temperatureC,simOpt)
         legend('Model','Experiment','Location','best'); grid on;
 
         nexttile;
-        plot(tSol,iceSaturationCCL,'LineWidth',1.5);
-        xlabel('Time / s'); ylabel('cCL ice saturation');
-        title('Ice accumulation in cCL'); grid on;
+        plot(tSol,iceVolumeFractionCCL,'LineWidth',1.5);
+        xlabel('Time / s'); ylabel('cCL ice volume fraction');
+        title('Ice volume fraction in cCL (Eq. 9)'); grid on;
     end
 
 end
@@ -342,7 +503,8 @@ end
 % RHS只调用水-冰、热、气体三个物理模块。
 % ========================================================================
 
-function [dx,out] = model_rhs_ice(t,x,u,ice,activation,g,s)
+function [dx,out] = model_rhs_ice( ...
+    t,x,u,ice,hydration,activation,transport,g,s)
 
     %% 1. 读取当前输入
 
@@ -368,22 +530,26 @@ function [dx,out] = model_rhs_ice(t,x,u,ice,activation,g,s)
     cO2State = x(s.idx.O2);
     mwState = x(s.idx.mw);
     miState = x(s.idx.mi);
+    lambdaCCLState = x(s.idx.lambdaCCL);
 
     cH2 = max(cH2State,0);
     cO2 = max(cO2State,0);
     mw = max(mwState,0);
     mi = max(miState,0);
+    lambdaCCL = max(lambdaCCLState,0);
     trialProjectionApplied = any(cH2State < 0) || any(cO2State < 0) || ...
-        any(mwState < 0) || any(miState < 0);
+        any(mwState < 0) || any(miState < 0) || lambdaCCLState < 0;
 
 
     %% 3. 依次计算水-冰、热和气体状态
 
-    [dmw,dmi,water] = water_ice_state_ice( ...
-        T,mw,mi,j,ice.kFreeze,ice.kMelt,g,s);
+    [dmw,dmi,dlambdaCCL,water] = water_ice_state_ice( ...
+        T,mw,mi,lambdaCCL,j,ice.kFreeze,ice.kMelt, ...
+        hydration.tauHyd,transport.hVaporCathode,g,s);
     [dT,thermal] = thermal_temperature_state_ice( ...
         T,cH2,cO2,water,j,Tamb,qaux,g,s,ice.gammaIce, ...
-        activation.j0Ref,activation.Ea);
+        activation.j0Ref,activation.Ea,activation.fHydDry, ...
+        activation.lambdaHydOn,activation.lambdaHydWet,activation.nHyd);
     [dcH2,dcO2,gas] = gas_transport_state_ice( ...
         T,cH2,cO2,mw,dmw,dT,water,thermal,j,g,s);
 
@@ -396,6 +562,7 @@ function [dx,out] = model_rhs_ice(t,x,u,ice,activation,g,s)
     dx(s.idx.O2) = dcO2;
     dx(s.idx.mw) = dmw;
     dx(s.idx.mi) = dmi;
+    dx(s.idx.lambdaCCL) = dlambdaCCL;
 
 
     %% 5. 汇总求解、标定和控制所需输出
@@ -428,6 +595,9 @@ function [dx,out] = model_rhs_ice(t,x,u,ice,activation,g,s)
         out.dmw = dmw;
         out.dmi = dmi;
         out.lambdaMean = water.lambdaMean;
+        out.lambdaCCL = water.lambdaCCL;
+        out.lambdaCCLEquilibrium = water.lambdaCCLEquilibrium;
+        out.dlambdaCCL = dlambdaCCL;
         out.reaction = gas.reaction;
         out.sources = gas.source;
         out.qgen = thermal.qgen;
@@ -440,6 +610,8 @@ function [dx,out] = model_rhs_ice(t,x,u,ice,activation,g,s)
         out.transportValid = thermal.transportValid;
         out.iceSaturationCCL = thermal.iceSaturationCCL;
         out.iceAreaFactor = thermal.iceAreaFactor;
+        out.hydrationDegree = thermal.hydrationDegree;
+        out.hydrationAreaFactor = thermal.hydrationAreaFactor;
         out.minH2 = min(cH2State);
         out.minO2 = min(cO2State);
         out.minMw = min(mwState);

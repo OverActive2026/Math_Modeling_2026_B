@@ -7,7 +7,8 @@
 %            j,Tamb,qaux->电流密度、环境温度和辅助热源
 %            g,s->网格和状态编号
 %            gammaIce->阴极催化层冰覆盖修正指数
-%            j0Ref,Ea->参考交换电流密度[A/m^2]和活化能[J/mol]
+%            j0Ref,Ea->充分水合时的参考交换电流密度[A/m^2]和活化能[J/mol]
+%            fHydDry,lambdaHydOn,lambdaHydWet,nHyd->cCL水合反应面积参数
 % @output:   dT->温度状态导数 [K/s]
 %            out->电压损失、热源、热通量和冰修正信息
 %
@@ -16,7 +17,8 @@
 %-------------------------------------------------------------------------------
 
 function [dT,out] = thermal_temperature_state_ice( ...
-    T,cH2,cO2,water,j,Tamb,qaux,g,s,gammaIce,j0Ref,Ea)
+    T,cH2,cO2,water,j,Tamb,qaux,g,s,gammaIce,j0Ref,Ea, ...
+    fHydDry,lambdaHydOn,lambdaHydWet,nHyd)
 
     %% 1. 输入处理
 
@@ -65,24 +67,68 @@ function [dT,out] = thermal_temperature_state_ice( ...
     Erev = 1.229-8.5e-4*(Tavg-298.15) + ...
         R*Tavg/(2*F)*log((pH2/101325)*sqrt(pO2/101325));
 
-    % [ICE-4] 有效反应面积修正只作用于cCL的交换电流密度：
-    %   fArea=(1-si_cCL)^gammaIce
-    %   j0_eff=j0_base*fArea
-    % 在给定电流边界下，Faraday反应源仍由j决定，不再重复乘fArea。
+    % [ICE-4] 冰覆盖修正只作用于cCL的交换电流密度：
+    %   fIce=(1-si_cCL)^gammaIce
+    %
+    % [HYD-3] 将“离聚物导电能力”和“催化剂的质子可达性”分开。
+    % lambdaCCL仍通过kappaCCL决定质子欧姆损失；此处另用有界函数
+    % 表示干态时只有部分催化表面接入连续质子通道：
+    %   thetaHyd=clip((lambdaCCL-lambdaHydOn)/
+    %                 (lambdaHydWet-lambdaHydOn),0,1)
+    %   fHyd=fHydDry+(1-fHydDry)*thetaHyd^nHyd
+    %   j0_eff=j0_wet(T)*fHyd*fIce
+    % 因此启动初期的干CL惩罚被保留，充分水合后fHyd最多恢复到1，
+    % 不使用时间开关，也不会无限放大交换电流。
     iceSaturationCCL = sum(water.sIce(g.idx_cCL).*dxCCL)/sum(dxCCL);
     iceAreaFactor = max(1-iceSaturationCCL,0)^gammaIce;
     iceAreaFactorForVoltage = max(iceAreaFactor,1e-8);
-    % [ACT-1] j0Ref和Ea由-20/-25 degC两个零时刻电压联合标定。
+    lambdaCCL = water.lambdaCCL;
+    hydrationDegree = min(max((lambdaCCL-lambdaHydOn)/ ...
+        (lambdaHydWet-lambdaHydOn),0),1);
+    hydrationAreaFactor = fHydDry+(1-fHydDry)*hydrationDegree^nHyd;
+    hydrationAreaFactorForVoltage = max(hydrationAreaFactor,1e-8);
+
+    % [ACT-2] j0Ref改为充分水合状态的参考值。干态零时刻的
+    % 有效值为j0Ref*fHydDry，避免把初始干燥性永久吸收进本征j0。
     j0Base = j0Ref*exp(-Ea/R*(1/Tavg-1/298.15));
-    j0Effective = j0Base*iceAreaFactorForVoltage;
+    j0Effective = j0Base*hydrationAreaFactorForVoltage* ...
+        iceAreaFactorForVoltage;
     etaAct = R*Tavg/(0.5*F)*asinh(j/(2*j0Effective));
 
-    kappaPem = (0.5139*water.lambdaMean-0.326)* ...
-        exp(1268*(1/303.15-1/Tavg));
-    if kappaPem <= 0
+    % [FIX-5] 欧姆损失应包含PEM和两个CL中的质子传导。
+    % 原程序虽然已经构造了CL内的im(x)，但电压中只使用
+    % j*Lpem/kappaPem，完全遗漏了CL离聚物的质子电阻。
+    % 附件1给出CL离聚物含量为0.3，第一版采用Bruggeman修正：
+    %   kappaCL=0.3^1.5*kappa(lambda,T)
+    %   etaOhmCL=int(im/kappaCL)dx
+    lambdaPemLocal = water.lambdaPEM;
+    kappaPemLocal = (0.5139.*lambdaPemLocal-0.326).* ...
+        exp(1268.*(1/303.15-1./T(g.idx_PEM)));
+
+    lambdaACL = lambdaPemLocal(1);
+    % [HYD-1] cCL电阻由自身离聚物水合状态决定，不再直接复制PEM右端。
+    % 因而冷启动前期干CL产生较大质子损失，产水水合后该损失自然衰减。
+    kappaACL = 0.3^1.5.*(0.5139*lambdaACL-0.326).* ...
+        exp(1268.*(1/303.15-1./T(g.idx_aCL)));
+    kappaCCL = 0.3^1.5.*(0.5139*lambdaCCL-0.326).* ...
+        exp(1268.*(1/303.15-1./T(g.idx_cCL)));
+
+    kappaPem = g.layerThickness(3)/sum(g.dx(g.idx_PEM)./kappaPemLocal);
+    if any(kappaPemLocal <= 0) || any(kappaACL <= 0) || ...
+            any(kappaCCL <= 0) || ~isfinite(kappaPem)
         etaOhm = Inf;
+        etaOhmPEM = Inf;
+        etaOhmACL = Inf;
+        etaOhmCCL = Inf;
+        etaOhmContact = Inf;
     else
-        etaOhm = j*(g.layerThickness(3)/kappaPem+0.01e-4);
+        etaOhmPEM = j*sum(g.dx(g.idx_PEM)./kappaPemLocal);
+        etaOhmACL = sum(water.imCell(g.idx_aCL).* ...
+            g.dx(g.idx_aCL)./kappaACL);
+        etaOhmCCL = sum(water.imCell(g.idx_cCL).* ...
+            g.dx(g.idx_cCL)./kappaCCL);
+        etaOhmContact = j*0.01e-4;
+        etaOhm = etaOhmPEM+etaOhmACL+etaOhmCCL+etaOhmContact;
     end
 
     transportValid = jLim > 0 && j >= 0 && j < jLim;
@@ -157,10 +203,23 @@ function [dT,out] = thermal_temperature_state_ice( ...
     voltage.Ea = Ea;
     voltage.j0Base = j0Base;
     voltage.j0 = j0Effective;
+    voltage.hydrationDegree = hydrationDegree;
+    voltage.hydrationAreaFactor = hydrationAreaFactor;
+    voltage.fHydDry = fHydDry;
+    voltage.lambdaHydOn = lambdaHydOn;
+    voltage.lambdaHydWet = lambdaHydWet;
+    voltage.nHyd = nHyd;
     voltage.iceAreaFactor = iceAreaFactor;
     voltage.etaAct = etaAct;
     voltage.kappaPem = kappaPem;
+    voltage.kappaPemLocal = kappaPemLocal;
+    voltage.kappaACL = kappaACL;
+    voltage.kappaCCL = kappaCCL;
     voltage.etaOhm = etaOhm;
+    voltage.etaOhmPEM = etaOhmPEM;
+    voltage.etaOhmACL = etaOhmACL;
+    voltage.etaOhmCCL = etaOhmCCL;
+    voltage.etaOhmContact = etaOhmContact;
     voltage.jLim = jLim;
     voltage.etaCon = etaCon;
     voltage.transportValid = transportValid;
@@ -225,6 +284,8 @@ function [dT,out] = thermal_temperature_state_ice( ...
     out.transportValid = transportValid;
     out.iceSaturationCCL = iceSaturationCCL;
     out.iceAreaFactor = iceAreaFactor;
+    out.hydrationDegree = hydrationDegree;
+    out.hydrationAreaFactor = hydrationAreaFactor;
     out.gammaIce = gammaIce;
 
 end

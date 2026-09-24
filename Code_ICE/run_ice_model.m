@@ -12,22 +12,40 @@
 %   models.T20、models.T25
 %-------------------------------------------------------------------------------
 
-%% 1. 活化损失参数
-% [ACT-1] 由-20/-25 degC两个零时刻电压联合标定。
+%% 1. 活化损失与水合反应面积参数
+% [ACT-2][HYD-3] j0Ref为充分水合状态的参考值。
 
-j0Ref = 0.2; % 298.15 K参考交换电流密度 [A/m^2]
-Ea = 67000;       % 活化能 [J/mol]
+j0Ref = 0.0827422651388;  % 298.15 K湿态参考交换电流密度 [A/m^2]
+Ea = 7028.980902;         % [ACT-2] 温度修正活化能 [J/mol]
+fHydDry = 0.06;           % 干态cCL可利用反应面积比例 [-]
+lambdaHydOn = 3.5;        % 反应面积开始恢复的lambda [-]
+lambdaHydWet = 8.0;       % 反应面积完全恢复的lambda [-]
+nHyd = 3.0;               % 水合反应面积恢复指数 [-]
 
 
-%% 2. 三个冰模型标定参数
+%% 2. cCL离聚物水合参数
+% [HYD-1] 吹扫后cCL比PEM更干；tauHyd控制产水进入离聚物的时间尺度。
+
+lambdaCCL0 = 1.0; % cCL初始平均离聚物含水量 [-]
+tauHyd = 10;      % cCL离聚物水合时间常数 [s]
+
+
+%% 3. 阴极有限排水参数
+% [WATER-2] cGDL到干空气气道的总体水蒸气传质系数。
+% 附件1未给出气道尺寸和流量，因此该值需结合冰量进一步标定。
+
+hVaporCathode = 0.01; % [m/s]；越小表示产水越难排出
+
+
+%% 4. 三个冰模型标定参数
 % 当前数值由用户自行设置；零值表示关闭对应冰机理。
 
-kFreeze = 10000;     % 冻结速率系数 [1/(K s)]
-kMelt = 0;       % 融化速率系数 [1/(K s)]
-gammaIce = 0;     % cCL冰覆盖对有效反应面积的修正指数 [-]
+kFreeze = 1;  % 冻结非平衡速率系数 [1/s]，当前采用文献量级
+kMelt = 0;    % 融化系数 [1/s]，当前工况未越过冰点，暂不可辨识
+gammaIce = 0.1; % 冰面积修正的约束拟合落在下界；仍保留接口供后续标定
 
 
-%% 3. 计算设置
+%% 5. 计算设置
 
 temperatureCases = [-20,-25]; % 可改为-20、-25或[-20,-25]
 tEnd = [];                     % []表示使用附件2的完整时间
@@ -35,10 +53,17 @@ showPlot = true;               % true绘图，false不绘图
 showInformation = true;        % true显示求解信息
 
 
-%% 4. 整理求解选项
+%% 6. 整理求解选项
 
 simOpt.j0Ref = j0Ref;
 simOpt.Ea = Ea;
+simOpt.fHydDry = fHydDry;
+simOpt.lambdaHydOn = lambdaHydOn;
+simOpt.lambdaHydWet = lambdaHydWet;
+simOpt.nHyd = nHyd;
+simOpt.tauHyd = tauHyd;
+simOpt.hVaporCathode = hVaporCathode;
+simOpt.init.lambdaCCL0 = lambdaCCL0;
 simOpt.kFreeze = kFreeze;
 simOpt.kMelt = kMelt;
 simOpt.gammaIce = gammaIce;
@@ -47,7 +72,7 @@ simOpt.plot = showPlot;
 simOpt.verbose = showInformation;
 
 
-%% 5. 调用含冰模型
+%% 7. 调用含冰模型
 
 codeDir = fileparts(mfilename('fullpath'));
 addpath(codeDir);
@@ -64,13 +89,16 @@ for temperatureC = temperatureCases
 end
 
 
-%% 6. 汇总最终结果
+%% 8. 汇总最终结果
 
 nCase = numel(temperatureCases);
 finalVoltage = zeros(nCase,1);
 finalTemperatureC = zeros(nCase,1);
 finalIceMassPerArea = zeros(nCase,1);
 finalIceSaturationCCL = zeros(nCase,1);
+finalIceVolumeFractionCCL = zeros(nCase,1);
+maximumIceVolumeFraction = zeros(nCase,1);
+finalHydrationAreaFactor = zeros(nCase,1);
 
 for k = 1:nCase
     caseName = sprintf('T%d',abs(temperatureCases(k)));
@@ -80,12 +108,20 @@ for k = 1:nCase
     finalTemperatureC(k) = currentResult.TavgC(end);
     finalIceMassPerArea(k) = currentResult.iceMassPerArea(end);
     finalIceSaturationCCL(k) = currentResult.iceSaturationCCL(end);
+    finalIceVolumeFractionCCL(k) = currentResult.iceVolumeFractionCCL(end);
+    maximumIceVolumeFraction(k) = max(currentResult.maxIceVolumeFraction);
+    finalHydrationAreaFactor(k) = currentResult.hydrationAreaFactor(end);
 end
 
 summaryTable = table(temperatureCases(:),finalVoltage,finalTemperatureC, ...
-    finalIceMassPerArea,finalIceSaturationCCL, ...
+    finalIceMassPerArea,finalIceVolumeFractionCCL, ...
+    maximumIceVolumeFraction,finalIceSaturationCCL, ...
+    finalHydrationAreaFactor, ...
     'VariableNames',{'CaseTemperatureC','FinalVoltageV', ...
-    'FinalTemperatureC','FinalIceMassKgM2','FinalCCLIceSaturation'});
+    'FinalTemperatureC','FinalIceMassKgM2', ...
+    'FinalCCLIceVolumeFraction','MaximumIceVolumeFraction', ...
+    'FinalCCLIceSaturation', ...
+    'FinalHydrationAreaFactor'});
 
 fprintf('\n========== 含冰模型计算汇总 ==========\n');
 disp(summaryTable);
