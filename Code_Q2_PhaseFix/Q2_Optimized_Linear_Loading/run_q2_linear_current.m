@@ -1,0 +1,217 @@
+%-------------------------------------------------------------------------------
+% 问题2：五片电堆线性升载自冷启动快速测试
+%
+% 使用方法：
+%   1. 修改第1节中的初始电流、升载速率和平台电流；
+%   2. 直接运行本脚本；
+%   3. 程序会运行到五片均达到0 degC，或触发电荷/电压/冰约束。
+%
+% 线性加载关系：
+%   j(t)=min(initialCurrentAcm2+rampRateAcm2s*t,plateauCurrentAcm2)
+%
+% 结果保存在result和model中，并绘制电流、五片温度、电压和冰体积分数。
+%-------------------------------------------------------------------------------
+
+clearvars;
+clc;
+
+codeDir = fileparts(mfilename('fullpath'));
+addpath(codeDir);
+
+
+%% 1. 手动输入线性加载参数
+
+initialCurrentAcm2 = 0.02;  % 线性加载的起始电流 [A/cm^2]
+rampRateAcm2s = 0.01;       % 电流密度上升速率 [A/(cm^2 s)]
+plateauCurrentAcm2 = 0.4;   % 达到该值后保持恒定 [A/cm^2]
+
+
+%% 2. 初始温度和最长运行时间
+
+initialTemperatureC = -10;     % 问题2(1)固定为-10 degC
+maximumSimulationTimeS = 600;  % 低升载速率工况的计算上限 [s]
+
+if ~isscalar(rampRateAcm2s) || ~isfinite(rampRateAcm2s) || ...
+        rampRateAcm2s <= 0
+    error('run_q2_linear_current:InvalidRampRate', ...
+        '升载速率必须是正有限标量。');
+end
+if ~isscalar(initialCurrentAcm2) || ...
+        ~isfinite(initialCurrentAcm2) || initialCurrentAcm2 < 0
+    error('run_q2_linear_current:InvalidInitialCurrent', ...
+        '初始电流密度必须是非负有限标量。');
+end
+if ~isscalar(plateauCurrentAcm2) || ...
+        ~isfinite(plateauCurrentAcm2) || ...
+        plateauCurrentAcm2 <= 0 || plateauCurrentAcm2 > 0.5
+    error('run_q2_linear_current:InvalidPlateauCurrent', ...
+        '平台电流密度必须在(0,0.5] A/cm^2内。');
+end
+if initialCurrentAcm2 > plateauCurrentAcm2
+    error('run_q2_linear_current:InitialAbovePlateau', ...
+        '初始电流密度不能大于平台电流密度。');
+end
+
+
+%% 3. 整理线性策略和求解设置
+
+strategy = struct('type','linear', ...
+    'initialAcm2',initialCurrentAcm2, ...
+    'rampRateAcm2s',rampRateAcm2s, ...
+    'plateauAcm2',plateauCurrentAcm2);
+
+% 根据线性升载曲线解析计算20 C/cm^2电荷上限对应的时间，
+% 再多留1 s给事件定位；实际积分仍由事件函数精确终止。
+chargeLimitCcm2 = 20;
+timeToPlateauS = ...
+    (plateauCurrentAcm2-initialCurrentAcm2)/rampRateAcm2s;
+chargeAtPlateauCcm2 = initialCurrentAcm2*timeToPlateauS+ ...
+    0.5*rampRateAcm2s*timeToPlateauS^2;
+if chargeLimitCcm2 <= chargeAtPlateauCcm2
+    chargeLimitTimeS = (-initialCurrentAcm2+sqrt( ...
+        initialCurrentAcm2^2+2*rampRateAcm2s*chargeLimitCcm2))/ ...
+        rampRateAcm2s;
+else
+    chargeLimitTimeS = timeToPlateauS+ ...
+        (chargeLimitCcm2-chargeAtPlateauCcm2)/plateauCurrentAcm2;
+end
+
+simOpt.tMax = min(maximumSimulationTimeS,chargeLimitTimeS+1);
+
+% 线性升载会经过接近零电流的低热源阶段，容差不能像恒流快速试算
+% 那样放宽到1e-2，否则Newton试探可能越过物理状态范围。
+simOpt.nCellLayer = [2 3 4 4 2];
+simOpt.RelTol = 1e-4;
+simOpt.AbsTol = 1e-8;
+simOpt.MaxStep = 0.05;
+simOpt.outputStep = 0.5;
+simOpt.plot = false;          % 本脚本在第5节统一绘图
+simOpt.verbose = false;
+simOpt.progressIntervalS = 1; % 每隔1 s仿真时间打印进度；设0可关闭
+simOpt.useJacobianPattern = true;
+
+% [Q2-2] 独立端板热节点，并避免重复计算双极板热容。
+simOpt.endPlateModel = 'separate';
+simOpt.bipolarPlateCounting = 'shared_stack';
+
+% 与问题1零时刻电压标定保持一致。
+simOpt.init.lambdaCCL0 = 2.0;
+simOpt.j0Ref = 0.527582014454;
+simOpt.Ea = 8000;
+
+% 当前水循环和相变参数。
+simOpt.hVaporCathode = 0.01;
+simOpt.hVaporAnode = 0.01;
+simOpt.interfaceRateFactor = 0.01;
+simOpt.kFreeze = 0.4; % 1/s, same physics as the optimizer.
+simOpt.gammaIce = 3.5; % Dimensionless CCL ice-coverage exponent.
+simOpt.kMelt = 1;
+simOpt.phaseTransitionWidthK = 0.2;
+simOpt.directFreezeFraction = 0.01;
+simOpt.freezeNucleationLambdaFraction = 0.5;
+
+% 题目约束。
+simOpt.qMaxCcm2 = chargeLimitCcm2;
+simOpt.jMaxAcm2 = 0.5;
+simOpt.minimumVoltageV = 0.30;
+simOpt.maximumIceVolumeFraction = 0.99;
+simOpt.maximumPoreOccupancy = 0.98; % 水+冰占用率堵塞阈值，留2%数值裕度
+
+
+%% 4. 运行到启动成功或失败
+
+[result,model] = pemfc_stack5_simulate( ...
+    strategy,initialTemperatureC,simOpt);
+
+fprintf('\n========== 线性升载启动结果 ==========\n');
+fprintf('初始电流：%.4f A/cm^2\n',initialCurrentAcm2);
+fprintf('升载速率：%.6f A/(cm^2 s)\n',rampRateAcm2s);
+fprintf('平台电流：%.4f A/cm^2，理论到达平台时间：%.4f s\n', ...
+    plateauCurrentAcm2,timeToPlateauS);
+fprintf('终止时间：%.4f s，终止电流：%.4f A/cm^2\n', ...
+    result.stopTimeS,result.currentDensityAcm2(end));
+fprintf('累积电荷：%.4f C/cm^2\n',result.chargeUsedCcm2);
+fprintf('全程最低单片电压：%.4f V（第%d片）\n', ...
+    result.minimumCellVoltageV,result.minimumVoltageCellIndex);
+fprintf('全程最大局部冰体积分数：%.6f（第%d片）\n', ...
+    result.maximumIceVolumeFraction,result.maximumIceCellIndex);
+fprintf('全程最大局部冰填充率：%.6f\n', ...
+    result.maximumIceFillingRatio);
+
+if result.success
+    resultText = '启动成功';
+    fprintf('启动结果：成功，ts=%.4f s\n',result.successTimeS);
+else
+    resultText = '启动失败';
+    fprintf('启动结果：失败，原因：%s\n',result.stopReason);
+end
+
+
+%% 5. 绘制加载曲线及五片电池的温度、电压和冰体积分数
+
+cellLegend = arrayfun(@(k)sprintf('第%d片',k),1:5, ...
+    'UniformOutput',false);
+lineColors = lines(5);
+if numel(result.t) == 1
+    markerStyle = 'o';
+else
+    markerStyle = 'none';
+end
+
+figure('Name','五片电堆线性升载自冷启动','Color','w');
+layout = tiledlayout(4,1,'TileSpacing','compact','Padding','compact');
+
+nexttile;
+yyaxis left;
+plot(result.t,result.currentDensityAcm2,'LineWidth',1.5);
+ylabel('j / A cm^{-2}');
+ylim([0,max(0.05,1.1*plateauCurrentAcm2)]);
+yyaxis right;
+plot(result.t,result.chargeCcm2,'LineWidth',1.3);
+yline(simOpt.qMaxCcm2,'k--','电荷上限');
+ylabel('q / C cm^{-2}');
+xlabel('时间 / s');
+title('线性升载电流和累积电荷');
+grid on;
+
+nexttile;
+temperatureLines = plot(result.t,result.TavgC, ...
+    'LineWidth',1.4,'Marker',markerStyle,'MarkerSize',6);
+for k = 1:5, temperatureLines(k).Color = lineColors(k,:); end
+hold on;
+yline(0,'k--','0 ^\circC启动线','LineWidth',1.0);
+xlabel('时间 / s');
+ylabel('平均温度 / ^\circC');
+title('五片电池平均温度');
+legend(temperatureLines,cellLegend,'Location','bestoutside');
+grid on;
+
+nexttile;
+voltageLines = plot(result.t,result.Vcell, ...
+    'LineWidth',1.4,'Marker',markerStyle,'MarkerSize',6);
+for k = 1:5, voltageLines(k).Color = lineColors(k,:); end
+hold on;
+yline(simOpt.minimumVoltageV,'k--','电压下限','LineWidth',1.0);
+xlabel('时间 / s');
+ylabel('单片电压 / V');
+title('五片电池电压');
+grid on;
+
+nexttile;
+% [PLOT-ICE] 每一列分别是一片电池的最大孔隙冰填充率，
+% 五条曲线保留在同一子图内，便于直接比较端部和中间电池。
+iceLines = plot(result.t,result.maxIceFillingRatioCell, ...
+    'LineWidth',1.4,'Marker',markerStyle,'MarkerSize',6);
+for k = 1:5, iceLines(k).Color = lineColors(k,:); end
+hold on;
+yline(1,'k--','孔隙完全被冰占据','LineWidth',1.0);
+xlabel('时间 / s');
+ylabel('最大局部冰填充率 s_i');
+title('五片电池孔隙冰填充率');
+ylim([0,1.05]);
+legend(iceLines,cellLegend,'Location','bestoutside');
+grid on;
+
+% title(layout,sprintf( ...
+%     '线性升载 %.3f \rightarrow %.3f A/cm^2，斜率%.4f：%s', ...
+%     initialCurrentAcm2,plateauCurrentAcm2,rampRateAcm2s,resultText));

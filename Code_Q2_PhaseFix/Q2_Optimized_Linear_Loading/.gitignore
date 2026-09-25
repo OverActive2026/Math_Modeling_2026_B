@@ -1,0 +1,6 @@
+*.mat
+!q2_linear_comparison_result.mat
+*.png
+!q2_linear_comparison.png
+*.fig
+*.writing
