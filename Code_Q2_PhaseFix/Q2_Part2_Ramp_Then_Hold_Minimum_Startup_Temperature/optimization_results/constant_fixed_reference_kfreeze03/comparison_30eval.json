@@ -1,0 +1,16 @@
+{
+  "referenceTimeS": 68.262427437444373,
+  "optimizedTimeS": 65.00582111590299,
+  "improvementS": 3.2566063215413834,
+  "improvementPercent": 4.7707156686242,
+  "referencePlateauAcm2": 0.259937538852887,
+  "optimizedPlateauAcm2": 0.2668808447608863,
+  "referenceMinVoltageV": 0.33245569000066877,
+  "optimizedMinVoltageV": 0.32407806450523358,
+  "optimizedChargeCcm2": 17.101926450901864,
+  "bestEvaluationIndex": 28,
+  "nEvaluations": 30,
+  "nSuccessful": 18,
+  "nNumericalIncomplete": 0,
+  "reportFile": "optimization_results/constant_fixed_reference_kfreeze03/tp8d194731_ec31_4801_8c43_3e9515cb2c92_report.mat"
+}
