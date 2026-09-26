@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <title>表 3 不同加载策略下电堆冷启动性能优化结果对比</title>
+  <style>
+    body { font-family: "SimSun", "宋体", serif; color: #111; margin: 24px; }
+    h1 { font-size: 16pt; font-weight: normal; text-align: center; margin: 0 0 10px; }
+    p { font-size: 10.5pt; line-height: 1.5; margin: 8px 0; }
+    table { border-collapse: collapse; width: 100%; table-layout: fixed; font-size: 9.5pt; }
+    th, td { border: 1px solid #777; padding: 6px 5px; text-align: center; vertical-align: middle; overflow-wrap: anywhere; }
+    th { background: #eeeeee; font-weight: bold; }
+    td.params { text-align: left; line-height: 1.4; }
+    .note { font-size: 9pt; }
+  </style>
+</head>
+<body>
+  <h1>表 3 不同加载策略下电堆冷启动性能优化结果对比</h1>
+  <p>初始温度与环境温度均为 −10 ℃。三行分别使用各资料包选定的优化曲线。</p>
+  <table>
+    <colgroup><col style="width:10%"><col style="width:30%"><col style="width:10%"><col style="width:12%"><col style="width:11%"><col style="width:9%"><col style="width:11%"><col style="width:7%"></colgroup>
+    <thead><tr><th>加载策略</th><th>最优加载参数</th><th>启动时间 / s</th><th>累计电荷量 / C·cm<sup>−2</sup></th><th>最大电流密度 / A·cm<sup>−2</sup></th><th>最低电压 / V</th><th>最大冰体积分数</th><th>启动结果</th></tr></thead>
+    <tbody>
+      <tr><td>恒流策略<sup>1</sup></td><td class="params">0–2 s：0.0200 → 0.2669 A·cm<sup>−2</sup>；<br>2 s 后：0.2669 A·cm<sup>−2</sup></td><td>65.005821</td><td>17.101926</td><td>0.266881</td><td>0.324078</td><td>0.367072</td><td>成功</td></tr>
+      <tr><td>线性升载</td><td class="params"><i>j</i>(<i>t</i>) = min(0.144981 + 0.00679855<i>t</i>, 0.478303)<sup>2</sup></td><td>41.991669</td><td>12.081952</td><td>0.430464<sup>2</sup></td><td>0.397340</td><td>0.339889</td><td>成功</td></tr>
+      <tr><td>分段阶梯加载</td><td class="params">七档电流 <i>j</i> = [0.1751, 0.2914, 0.2427, 0.2618, 0.5000, 0.3996, 0.4300] A·cm<sup>−2</sup>；<br>切换时刻 <i>τ</i> = [2.579, 12.164, 20.583, 27.583, 30.993, 32.494] s</td><td>36.587254</td><td>11.185201</td><td>0.500000</td><td>0.314516</td><td>0.305880</td><td>成功</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><sup>1</sup> 按项目约定称“恒流策略”，实际为前 2 s 升流、之后恒流，并非全程恒流。<sup>2</sup> 线性曲线的平台设定值为 0.478303 A·cm<sup>−2</sup>，启动前尚未到达；表中 0.430464 A·cm<sup>−2</sup> 为启动前实际最大值。<i>t</i> 以 s 计。</p>
+  <p class="note">可比性说明：恒流策略采用 <i>k</i><sub>Freeze</sub> = 0.3，线性与阶梯采用 <i>k</i><sub>Freeze</sub> = 0.4；三组均采用 <i>γ</i><sub>Ice</sub> = 3.5 和快网格 [2 3 4 4 2]。因此表中时间差不能完全归因于加载策略。线性曲线另受 −10 ℃ 时间不超过原最短值 105% 的选择条件约束；阶梯曲线另受 −11.2 ℃ 可启动约束。</p>
+</body>
+</html>
