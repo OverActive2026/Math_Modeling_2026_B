@@ -1,0 +1,572 @@
+function report = q2_optimize_trbo(kind,opt)
+%Q2_OPTIMIZE_TRBO Feasibility-guided inspector TR with analytic LogEI.
+% FuRBO supplies the inspector-defined trust region; Ament et al. supply
+% stable analytic LogEI for ranking points inside it. This hybrid replaces
+% FuRBO's joint Thompson-sampling acquisition and is NOT exact FuRBO.
+% Every reported best point has been evaluated by the supplied oracle.
+% Package entry: run_q2_verified_optimization; explicit oracle required.
+if nargin<2, opt=struct(); end
+kind = lower(char(kind));
+switch kind
+    case 'step6_full', d=11;
+    case 'step7_full', d=13;
+    otherwise, error('Q2:UnknownStrategy','Unknown strategy: %s',kind);
+end
+opt = default(opt,'maxEvaluations',24);
+opt = default(opt,'initialSamples',min(12,opt.maxEvaluations));
+opt = default(opt,'seed',20260924);
+opt = default(opt,'initialTemperatureC',-10);
+opt = default(opt,'simOpt',struct());
+opt = default(opt,'evaluator',[]);
+opt = default(opt,'initialPoints',zeros(0,d));
+assert(isa(opt.evaluator,'function_handle'),'Q2:EvaluatorRequired', ...
+    'Use the packaged entry or supply an explicit evaluator.');
+opt = default(opt,'useIncumbentCutoff',false);
+opt = default(opt,'cutoffSlackS',0.5);
+opt = default(opt,'initialRadius',1);
+opt = default(opt,'minRadius',5e-8);
+opt = default(opt,'minFeasibilityProbability',0);
+opt = default(opt,'localRiskWeight',0);
+opt = default(opt,'initialGoodStreak',0);
+opt = default(opt,'initialBadStreak',0);
+opt = default(opt,'stateCallback',[]);
+opt = default(opt,'nInspectors',1024);
+opt = default(opt,'nCandidates',1024);
+opt = default(opt,'acquisitionRestarts',4);
+opt = default(opt,'inspectorTopFraction',0.10);
+opt = default(opt,'constraintLearning','binary');
+opt = default(opt,'globalCandidateFraction',0);
+opt = default(opt,'maxDistanceFromSuccess',inf);
+opt = default(opt,'globalScoutPeriod',0);
+assert(isa(opt.evaluator,'function_handle'),'evaluator must be a function handle.');
+assert(opt.maxEvaluations>=2 && opt.initialSamples>=2 && ...
+    opt.initialSamples<=opt.maxEvaluations,'Invalid evaluation budget.');
+assert(isscalar(opt.cutoffSlackS) && isfinite(opt.cutoffSlackS) && ...
+    opt.cutoffSlackS>=0,'cutoffSlackS must be nonnegative.');
+assert(opt.initialRadius>0 && isfinite(opt.initialRadius));
+assert(opt.minRadius>0 && opt.minRadius<=opt.initialRadius && ...
+    isfinite(opt.minRadius),'Invalid minimum trust-region radius.');
+assert(opt.minFeasibilityProbability>=0 && ...
+    opt.minFeasibilityProbability<1 && ...
+    isfinite(opt.minFeasibilityProbability));
+assert(isscalar(opt.localRiskWeight) && ...
+    isfinite(opt.localRiskWeight) && opt.localRiskWeight>=0 && ...
+    opt.localRiskWeight<=2);
+assert(opt.initialGoodStreak>=0 && opt.initialGoodStreak==floor(opt.initialGoodStreak));
+assert(opt.initialBadStreak>=0 && opt.initialBadStreak==floor(opt.initialBadStreak));
+assert(isempty(opt.stateCallback) || isa(opt.stateCallback,'function_handle'));
+assert(opt.nInspectors>=20 && opt.nInspectors==floor(opt.nInspectors));
+assert(opt.nCandidates>=20 && opt.nCandidates==floor(opt.nCandidates));
+assert(opt.acquisitionRestarts>=0 && ...
+    opt.acquisitionRestarts==floor(opt.acquisitionRestarts));
+assert(opt.inspectorTopFraction>0 && opt.inspectorTopFraction<=1);
+assert(ismember(string(opt.constraintLearning),["binary","event_aware"]));
+assert(opt.globalCandidateFraction>=0 && opt.globalCandidateFraction<1);
+assert(opt.maxDistanceFromSuccess>0);
+assert(opt.globalScoutPeriod>=0 && ...
+    opt.globalScoutPeriod==floor(opt.globalScoutPeriod));
+assert(size(opt.initialPoints,2)==d && ...
+    size(opt.initialPoints,1)<=opt.initialSamples && ...
+    all(isfinite(opt.initialPoints(:))) && ...
+    all(opt.initialPoints(:)>=0) && all(opt.initialPoints(:)<=1), ...
+    'initialPoints must be rows in [0,1]^d.');
+assert(exist('lhsdesign','file')==2 && exist('fitrgp','file')==2, ...
+    'Statistics and Machine Learning Toolbox is required.');
+rng(opt.seed,'twister');
+N = opt.maxEvaluations;
+X = nan(N,d); Y = nan(N,1); G = nan(N,1);
+wallSeconds = nan(N,1);
+success = false(N,1); numericalFailure = false(N,1);
+timeCensored = false(N,1);
+records = cell(N,1); n = 0;
+acquisitionTrace=struct('x',{},'radius',{},'predictedTime',{}, ...
+    'timeSD',{},'feasibilityProbability',{},'logScore',{}, ...
+    'poolLogScore',{},'actualTime',{},'success',{}, ...
+    'trLower',{},'trUpper',{},'center',{});
+initial = lhsdesign(opt.initialSamples,d,'criterion','maximin','iterations',5);
+initial(1:size(opt.initialPoints,1),:)=opt.initialPoints;
+for i=1:opt.initialSamples
+    evaluate(initial(i,:));
+end
+radius=max(opt.initialRadius,opt.minRadius);
+goodStreak=opt.initialGoodStreak;
+badStreak=opt.initialBadStreak;
+while n<N
+    valid=find(~numericalFailure(1:n) & ~timeCensored(1:n) & ...
+        isfinite(G(1:n)));
+    % In d dimensions, start constraint learning as soon as d+1 distinct
+    % physical labels exist. Waiting longer can repeat a known failure.
+    % Event-driven solvers stop precisely at a constraint boundary, so the
+    % terminal voltage margin of a failed run is often zero. The default
+    % legacy mode learns a binary label; event_aware mode uses the signed
+    % diagnostic plus an early-event severity signal instead.
+    if strcmpi(opt.constraintLearning,'event_aware')
+        constraintLabels=G(valid);
+    else
+        constraintLabels=0.5-double(success(valid));
+    end
+    gModel=fit_gp(X(valid,:),constraintLabels,max(3,d+1));
+    riskX=X(valid,:);
+    riskSuccess=double(success(valid));
+    feasible=find(success(1:n) & isfinite(Y(1:n)));
+    % Two distinct successful starts are already informative about time.
+    % Requiring five made the search feasibility-only for many expensive
+    % evaluations, contrary to the intended EI x feasibility acquisition.
+    yModel=fit_gp(X(feasible,:),Y(feasible),2);
+    if isempty(valid)
+        center=0.5*ones(1,d);
+    elseif isempty(feasible)
+        [~,j]=min(G(valid));
+        center=X(valid(j),:);
+    else
+        [~,j]=min(Y(feasible));
+        center=X(feasible(j),:);
+    end
+    % FuRBO Algorithm 1, lines 4-7: inspectors in a ball around the best
+    % observed point, then the top predicted points define a hyperrectangle.
+    inspectors=sample_inspectors(center,radius,opt.nInspectors,d);
+    [iGMu,iGSd]=gp_predict(gModel,inspectors);
+    iLogP=log_normal_cdf(-iGMu./max(iGSd,1e-12));
+    if opt.localRiskWeight>0
+        iLogP=iLogP+opt.localRiskWeight*log( ...
+            local_feasibility(inspectors,riskX,riskSuccess,radius));
+    end
+    iFeasible=iLogP>=log(0.5);
+    if ~isempty(yModel)
+        [iYMu,~]=gp_predict(yModel,inspectors);
+        iRank=iYMu;
+        iRank(~iFeasible)=iGMu(~iFeasible);
+    else
+        iRank=-iLogP;
+    end
+    [~,iOrder]=sortrows([~iFeasible,iRank],[1 2]);
+    top=inspectors(iOrder(1:max(2,ceil(opt.inspectorTopFraction* ...
+        opt.nInspectors))),:);
+    if ~isempty(feasible)
+        % Hybrid safeguard: the observed feasible incumbent remains inside
+        % the inspector box even when surrogate rankings are inaccurate.
+        top=[top;center]; %#ok<AGROW>
+    end
+    trLower=max(0,min(top,[],1));
+    trUpper=min(1,max(top,[],1));
+    % Avoid a degenerate box when the inspectors collapse near a boundary.
+    width=max(trUpper-trLower,min(0.02,0.1*radius));
+    midpoint=(trLower+trUpper)/2;
+    trLower=max(0,midpoint-width/2);
+    trUpper=min(1,midpoint+width/2);
+    pool=trLower+(trUpper-trLower).*lhsdesign(opt.nCandidates,d, ...
+        'criterion','maximin','iterations',2);
+    pool(end,:)=min(trUpper,max(trLower,center));
+    nGlobal=ceil(opt.globalCandidateFraction*opt.nCandidates);
+    if nGlobal>0
+        pool=[pool;lhsdesign(nGlobal,d,'criterion','maximin', ...
+            'iterations',2)]; %#ok<AGROW>
+    end
+    bestObserved=inf;
+    if ~isempty(feasible), bestObserved=min(Y(feasible)); end
+    [pMu,pSd]=gp_predict(gModel,pool);
+    poolLogP=log_normal_cdf(-pMu./max(pSd,1e-12));
+    if opt.localRiskWeight>0
+        poolLogP=poolLogP+opt.localRiskWeight*log( ...
+            local_feasibility(pool,riskX,riskSuccess,radius));
+    end
+    poolP=exp(poolLogP);
+    minP=opt.minFeasibilityProbability;
+    feasibilityRescue=max(poolP)<minP;
+    if feasibilityRescue, minP=0; end
+    score=acquisition_score(pool,gModel,yModel,bestObserved,minP, ...
+        riskX,riskSuccess,radius,opt.localRiskWeight);
+    if feasibilityRescue, score=poolLogP; end
+    scout=opt.globalScoutPeriod>0 && ...
+        mod(n-opt.initialSamples+1,opt.globalScoutPeriod)==0;
+    if isfinite(opt.maxDistanceFromSuccess) && ...
+            ~isempty(feasible) && ~scout
+        supported=min(pdist2(pool,X(feasible,:)),[],2) <= ...
+            opt.maxDistanceFromSuccess;
+        score(~supported)=-1e100;
+    end
+    poolBest=max(score);
+    % Optimize the cheap acquisition itself, never the physical model.
+    % Retain all pool points so refinement cannot lower its best score.
+    [~,starts]=sort(score,'descend');
+    for localIndex=1:min(opt.acquisitionRestarts,numel(starts))
+        if feasibilityRescue, break; end
+        u=(pool(starts(localIndex),:)-trLower)./max(trUpper-trLower,eps);
+        u=min(1-1e-6,max(1e-6,u));
+        z0=log(u./(1-u));
+        transform=@(z) trLower+(trUpper-trLower)./(1+exp(-max(-40,min(40,z))));
+        objective=@(z) -acquisition_score(transform(z),gModel, ...
+            yModel,bestObserved,minP,riskX,riskSuccess,radius, ...
+            opt.localRiskWeight);
+        z=fminsearch(objective,z0,optimset('Display','off', ...
+            'MaxIter',60,'MaxFunEvals',140,'TolX',1e-4,'TolFun',1e-5));
+        pool(end+1,:)=transform(z); %#ok<AGROW>
+    end
+    score=acquisition_score(pool,gModel,yModel,bestObserved,minP, ...
+        riskX,riskSuccess,radius,opt.localRiskWeight);
+    if feasibilityRescue
+        [rescueMu,rescueSd]=gp_predict(gModel,pool);
+        score=log_normal_cdf(-rescueMu./max(rescueSd,1e-12));
+        if opt.localRiskWeight>0
+            score=score+opt.localRiskWeight*log( ...
+                local_feasibility(pool,riskX,riskSuccess,radius));
+        end
+    end
+    if isfinite(opt.maxDistanceFromSuccess) && ...
+            ~isempty(feasible) && ~scout
+        supported=min(pdist2(pool,X(feasible,:)),[],2) <= ...
+            opt.maxDistanceFromSuccess;
+        score(~supported)=-1e100;
+    end
+    [~,order]=sort(score,'descend');
+    chosen=[];
+    requiredSeparation=min(0.002,0.02*radius);
+    for pass=1:4
+        for k=1:numel(order)
+            c=pool(order(k),:);
+            if all(vecnorm(X(1:n,:)-c,2,2)>requiredSeparation)
+                chosen=c; break
+            end
+        end
+        if ~isempty(chosen), break; end
+        requiredSeparation=requiredSeparation/2;
+    end
+    if isempty(chosen)
+        % Preserve the trust-region semantics even if all proposed points
+        % are close to previous evaluations.
+        chosen=pool(order(1),:);
+    end
+    oldBest=inf;
+    if ~isempty(feasible), oldBest=min(Y(feasible)); end
+    [chosenMu,chosenSd]=gp_predict(yModel,chosen);
+    [chosenG,chosenGs]=gp_predict(gModel,chosen);
+    chosenLogP=log_normal_cdf(-chosenG./max(chosenGs,1e-12));
+    if opt.localRiskWeight>0
+        chosenLogP=chosenLogP+opt.localRiskWeight*log( ...
+            local_feasibility(chosen,riskX,riskSuccess,radius));
+    end
+    chosenP=exp(chosenLogP);
+    chosenScore=acquisition_score(chosen,gModel,yModel,bestObserved,minP, ...
+        riskX,riskSuccess,radius,opt.localRiskWeight);
+    if feasibilityRescue, chosenScore=chosenLogP; end
+    if opt.localRiskWeight>0
+        fprintf('Acquisition: R=%.5g predicted-objective=%.4f SD=%.4f risk-adjusted weight=%.3f logScore=%.4g\n', ...
+            radius,chosenMu,chosenSd,chosenP,chosenScore);
+    else
+        fprintf('Acquisition: R=%.5g predicted-objective=%.4f SD=%.4f P(feasible)=%.3f logCEI=%.4g\n', ...
+            radius,chosenMu,chosenSd,chosenP,chosenScore);
+    end
+    idx=evaluate(chosen);
+    acquisitionTrace(end+1)=struct('x',chosen,'radius',radius, ...
+        'predictedTime',chosenMu,'timeSD',chosenSd, ...
+        'feasibilityProbability',chosenP,'logScore',chosenScore, ...
+        'poolLogScore',poolBest,'actualTime',Y(idx),'success',success(idx), ...
+        'trLower',trLower,'trUpper',trUpper,'center',center); %#ok<AGROW>
+    if numericalFailure(idx)
+        % Numerical failures consume budget but are not physical labels.
+        if ~isempty(opt.stateCallback)
+            opt.stateCallback(struct('radius',radius, ...
+                'goodStreak',goodStreak,'badStreak',badStreak));
+        end
+        continue
+    elseif success(idx) && Y(idx)<oldBest-1e-8
+        goodStreak=goodStreak+1; badStreak=0;
+    else
+        badStreak=badStreak+1; goodStreak=0;
+    end
+    if goodStreak>=2
+        radius=min(2,2*radius); goodStreak=0; badStreak=0;
+    elseif badStreak>=3
+        radius=max(opt.minRadius,0.5*radius); badStreak=0; goodStreak=0;
+    end
+    if ~isempty(opt.stateCallback)
+        opt.stateCallback(struct('radius',radius, ...
+            'goodStreak',goodStreak,'badStreak',badStreak));
+    end
+end
+feasible=find(success & isfinite(Y));
+report.kind=kind;
+report.seed=opt.seed;
+report.nEvaluations=n;
+report.nSuccess=numel(feasible);
+report.nNumericalFailures=sum(numericalFailure);
+report.nTimeCensored=sum(timeCensored);
+report.X=X; report.startupTimeS=Y;
+report.objectiveValue=Y;
+for k=1:n
+    if ~isempty(records{k}) && isfield(records{k},'optimizationScore')
+        report.startupTimeS(k)=records{k}.startup_time;
+    end
+end
+report.signedConstraint=G; report.success=success;
+report.numericalFailure=numericalFailure;
+report.timeCensored=timeCensored;
+report.wallSeconds=wallSeconds;
+report.trustRadiusFinal=radius;
+report.goodStreakFinal=goodStreak;
+report.badStreakFinal=badStreak;
+if opt.localRiskWeight>0
+    report.acquisition= ...
+        'analytic_logei_times_risk_adjusted_feasibility_in_inspector_TR';
+else
+    report.acquisition='analytic_logei_times_feasibility_in_inspector_TR';
+end
+report.acquisitionTrace=acquisitionTrace;
+report.algorithmSettings=struct('nInspectors',opt.nInspectors, ...
+    'nCandidates',opt.nCandidates, ...
+    'acquisitionRestarts',opt.acquisitionRestarts, ...
+    'minRadius',opt.minRadius, ...
+    'minFeasibilityProbability',opt.minFeasibilityProbability, ...
+    'localRiskWeight',opt.localRiskWeight, ...
+    'constraintLearning',opt.constraintLearning, ...
+    'globalCandidateFraction',opt.globalCandidateFraction, ...
+    'maxDistanceFromSuccess',opt.maxDistanceFromSuccess, ...
+    'globalScoutPeriod',opt.globalScoutPeriod, ...
+    'inspectorTopFraction',opt.inspectorTopFraction, ...
+    'anchorObservedIncumbent',true, ...
+    'nominalCandidateSeparation',0.002, ...
+    'uncertainty','latent_function_standard_deviation');
+report.evaluations=records;
+report.best=[];
+report.bestX=[];
+report.bestStrategy=[];
+report.bestTimeS=NaN;
+if ~isempty(feasible)
+    [report.bestTimeS,j]=min(Y(feasible));
+    idx=feasible(j);
+    report.best=records{idx};
+    report.bestObjectiveValue=Y(idx);
+    report.bestTimeS=report.best.startup_time;
+    report.bestX=X(idx,:);
+    if isfield(report.best,'strategy')
+        report.bestStrategy=report.best.strategy;
+    end
+end
+report.note=['The incumbent is an observed feasible evaluation. ', ...
+    'A mock evaluator does not validate the physical model.'];
+
+    function idx=evaluate(x)
+        fprintf('\n[%s %d/%d] 开始评价，归一化参数 = [', ...
+            kind,n+1,N);
+        fprintf(' %.4f',x);
+        fprintf(' ]\n');
+        evaluationClock=tic;
+        thisSimOpt=opt.simOpt;
+        if opt.useIncumbentCutoff
+            required={'tMax','gammaIce','kFreeze','nCellLayer', ...
+                'qMaxCcm2','jMaxAcm2','minimumVoltageV'};
+            assert(all(isfield(thisSimOpt,required)), ...
+                'Q2:IncompletePhysics','Custom cutoff requires complete physical options.');
+            assert(nargin(opt.evaluator)==2 || nargin(opt.evaluator)<0, ...
+                'Q2:EvaluatorSignature','Custom cutoff evaluator must accept (x,simOpt).');
+            for previous=1:n
+                assert(~isfield(records{previous},'optimizationScore'), ...
+                    'Q2:CutoffUnits','Time cutoff cannot use a non-time objective.');
+            end
+        end
+        if opt.useIncumbentCutoff
+            incumbent=Y(success(1:n) & isfinite(Y(1:n)));
+            baseTmax=180;
+            if isfield(thisSimOpt,'tMax') && ~isempty(thisSimOpt.tMax)
+                baseTmax=thisSimOpt.tMax;
+            end
+            if ~isempty(incumbent)
+                candidateTmax=min(baseTmax,min(incumbent)+opt.cutoffSlackS);
+                if candidateTmax<baseTmax
+                    thisSimOpt.tMax=candidateTmax;
+                    thisSimOpt.optimizationCutoffActive=true;
+                    % The warm scenario is the only one with a time
+                    % objective. Capping colder scenarios with the same
+                    % cutoff would falsely label feasible schedules as
+                    % infeasible (the -11 C run has no time limit), so
+                    % give them their own generous horizon.
+                    if ~isfield(thisSimOpt,'coldTMaxS')
+                        thisSimOpt.coldTMaxS=baseTmax;
+                    end
+                    fprintf('已知最快 %.3f s；本方案若 %.3f s 前未启动则提前结束。\n', ...
+                        min(incumbent),candidateTmax);
+                end
+            end
+        end
+        if opt.useIncumbentCutoff && ...
+                isfield(thisSimOpt,'optimizationCutoffActive') && ...
+                thisSimOpt.optimizationCutoffActive
+            result=opt.evaluator(x,thisSimOpt);
+        else
+            result=opt.evaluator(x);
+        end
+        evaluationWallSeconds=toc(evaluationClock);
+        assert(isstruct(result) && isfield(result,'success') && ...
+            isfield(result,'startup_time') && isfield(result,'V_min') && ...
+            isfield(result,'q_use') && isfield(result,'ice_peak') && ...
+            isfield(result,'T_min_end'), ...
+            'Evaluator is missing required fields.');
+        n=n+1; idx=n; X(idx,:)=x;
+        wallSeconds(idx)=evaluationWallSeconds;
+        success(idx)=logical(result.success) && ...
+            isfinite(result.startup_time);
+        if success(idx)
+            Y(idx)=result.startup_time;
+            if isfield(result,'optimizationScore')
+                assert(isscalar(result.optimizationScore) && isfinite(result.optimizationScore));
+                Y(idx)=result.optimizationScore;
+            end
+        else
+            assert(isnan(result.startup_time), ...
+                'A failed run must have startup_time=NaN.');
+        end
+        if isfield(result,'solver_failed') && logical(result.solver_failed)
+            assert(~success(idx),'A solver failure cannot be successful.');
+            numericalFailure(idx)=true;
+            records{idx}=result;
+            fprintf('%s eval %d/%d NUMERICAL_FAILURE (excluded from GP), wall=%.1f s\n', ...
+                kind,n,N,wallSeconds(idx));
+            return
+        end
+        if isfield(result,'time_censored') && logical(result.time_censored)
+            assert(~success(idx),'A time-censored run cannot be successful.');
+            timeCensored(idx)=true;
+            records{idx}=result;
+            fprintf('%s eval %d/%d NO_IMPROVEMENT_BY_CUTOFF (excluded from GP), wall=%.1f s\n', ...
+                kind,n,N,wallSeconds(idx));
+            return
+        end
+        iceForScore=result.ice_peak;
+        if success(idx) && isfield(result,'ice_start')
+            iceForScore=result.ice_start;
+        end
+        margins=[(0.30-result.V_min)/0.30, ...
+            (result.q_use-20)/20, ...
+            (iceForScore-0.99)/0.99];
+        if isfield(result,'raw') && isfield(result.raw, ...
+                'maximumPoreOccupancy')
+            margins(end+1)=(result.raw.maximumPoreOccupancy-0.98)/0.98;
+        end
+        hasPhysicalEvent=isfield(result,'raw') && ...
+            isfield(result.raw,'event') && ...
+            isfield(result.raw.event,'index') && ...
+            ~isempty(result.raw.event.index);
+        if ~success(idx) && ~hasPhysicalEvent
+            % Only a timeout has a meaningful distance-to-warmup signal.
+            % A voltage-triggered run ends early by design: its remaining
+            % temperature deficit is NOT an extra voltage violation.
+            margins(end+1)=(273.15-result.T_min_end)/10;
+        end
+        assert(all(isfinite(margins)),'Non-finite diagnostic returned.');
+        G(idx)=max(margins);
+        if ~success(idx) && strcmpi(opt.constraintLearning,'event_aware') && ...
+                hasPhysicalEvent && isfield(result,'termination_time') && ...
+                isfinite(result.termination_time)
+            % Event termination pins voltage exactly at the threshold.
+            % Earlier failures therefore carry a larger positive signal.
+            G(idx)=max(G(idx),0.01+0.25*max(0, ...
+                (60-result.termination_time)/60));
+        end
+        % Success is authoritative; unsuccessful warm-up/solver termination
+        % must not be learned as feasible just because limits were not hit.
+        if success(idx), G(idx)=min(G(idx),-1e-5);
+        else, G(idx)=max(G(idx),1e-5); end
+        if isfield(result,'robustConstraint')
+            assert(isscalar(result.robustConstraint) && isfinite(result.robustConstraint));
+            assert((result.robustConstraint<0)==success(idx), ...
+                'Robust constraint sign must agree with all-scenario success.');
+            G(idx)=result.robustConstraint;
+        end
+        records{idx}=result;
+        fprintf('%s eval %d/%d success=%d time=%.4g s G=%.3g wall=%.1f s\n', ...
+            kind,n,N,success(idx),result.startup_time,G(idx),wallSeconds(idx));
+        if isfield(result,'optimizationScore')
+            fprintf('  adaptation objective score=%g (NOT seconds)\n',Y(idx));
+        end
+    end
+end
+
+function s=default(s,name,value)
+if ~isfield(s,name) || isempty(s.(name)), s.(name)=value; end
+end
+
+function model=fit_gp(X,y,minPoints)
+if size(X,1)<minPoints || numel(unique(y))<2
+    model=[];
+else
+    % Engineering heuristic, not an identifiability guarantee: use fewer
+    % kernel parameters at small sample sizes.
+    if size(X,1) >= 2*(size(X,2)+2)
+        model=fitrgp(X,y,'KernelFunction','ardsquaredexponential', ...
+            'Standardize',true,'FitMethod','exact','PredictMethod','exact');
+    else
+        model=fitrgp(X,y,'KernelFunction','squaredexponential', ...
+            'Standardize',true,'FitMethod','exact','PredictMethod','exact');
+    end
+end
+end
+
+function [mu,sd]=gp_predict(model,X)
+if isempty(model)
+    mu=zeros(size(X,1),1); sd=ones(size(X,1),1);
+else
+    [mu,sd]=predict(model,X);
+    % MATLAB predict returns response variance = latent variance + noise.
+    % Retain the response uncertainty rather than imposing an uncalibrated
+    % fixed variance floor that can overstate sparse-data confidence.
+    mu=double(mu(:));
+    sd=max(double(sd(:)),sqrt(eps));
+end
+end
+
+function score=acquisition_score(X,gModel,yModel,bestObserved,minP, ...
+    riskX,riskSuccess,radius,localRiskWeight)
+[gMu,gSd]=gp_predict(gModel,X);
+logP=log_normal_cdf(-gMu./max(gSd,1e-12));
+if localRiskWeight>0
+    logP=logP+localRiskWeight*log( ...
+        local_feasibility(X,riskX,riskSuccess,radius));
+end
+if isempty(yModel) || ~isfinite(bestObserved)
+    score=logP+0.05*log(max(gSd,1e-12));
+else
+    [mu,sd]=gp_predict(yModel,X);
+    score=q2_logei(bestObserved,mu,sd)+logP;
+end
+
+score=max(-1e100,score);
+score(exp(logP)<minP)=-1e100;
+end
+
+function p=local_feasibility(X,observedX,observedSuccess,radius)
+% Empirical neighborhood correction for an overconfident sparse-data GP.
+% This is an engineering safeguard, not a step from the FuRBO paper.
+if isempty(observedX)
+    p=ones(size(X,1),1);
+    return
+end
+bandwidth=max(0.06,0.6*radius);
+distance2=pdist2(X,observedX,'squaredeuclidean');
+weights=exp(-distance2/(2*bandwidth^2));
+good=weights*observedSuccess;
+bad=weights*(1-observedSuccess);
+p=(0.5+good)./(1+good+bad);
+p=max(1e-6,min(1-1e-6,p));
+end
+
+function X=sample_inspectors(center,radius,n,d)
+% Rejection sampling is uniform on ball intersected with [0,1]^d.
+% Clipping sphere samples would put spurious probability mass on faces.
+lo=max(0,center-radius); hi=min(1,center+radius);
+X=zeros(n,d); filled=0;
+while filled<n
+    trial=lo+(hi-lo).*rand(max(256,4*(n-filled)),d);
+    trial=trial(sum((trial-center).^2,2)<=radius^2,:);
+    count=min(n-filled,size(trial,1));
+    X(filled+(1:count),:)=trial(1:count,:);
+    filled=filled+count;
+end
+end
+
+function y=log_normal_cdf(x)
+y=zeros(size(x));
+negative=x<0;
+y(~negative)=log(0.5*erfc(-x(~negative)/sqrt(2)));
+xn=x(negative);
+y(negative)=-0.5*xn.^2+log(0.5*erfcx(-xn/sqrt(2)));
+end
