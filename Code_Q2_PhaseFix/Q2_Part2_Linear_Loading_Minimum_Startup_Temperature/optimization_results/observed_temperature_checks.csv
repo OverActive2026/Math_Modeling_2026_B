@@ -1,0 +1,6 @@
+temperatureC,result,startupTimeS,stopTimeS,minimumVoltageV,chargeCcm2,maximumPoreOccupancy,criticalCell,recordSource
+-10,success,41.991669326965,41.991669326965,0.397340269,12.081952299,0.851316854,1,saved_verified_report
+-10.1,success,42.274065513239,42.274065513239,0.397141067,12.203784547,0.857060995,1,saved_verified_report
+-11,success,44.670488783,44.670488783,0.357643,,0.896447,,MATLAB_console_check
+-12,failure,,39.375856156,0.300000,10.979200,0.849845,,MATLAB_console_check
+-15,failure,,40.092799491,0.300000,11.276868,0.861908,,MATLAB_console_check
