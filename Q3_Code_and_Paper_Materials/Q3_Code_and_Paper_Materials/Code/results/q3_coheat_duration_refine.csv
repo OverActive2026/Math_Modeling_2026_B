@@ -1,0 +1,2 @@
+thRequestedS,q1,q2,q3,q4,q5,status,energyJ,startupTimeS,minimumVoltageV,maximumIceVolumeFraction,reason,elapsedS
+30.2237662556899,1,1,1,1,1,infeasible,3777.97078196124,NaN,0.437269150766035,0.361390333184919,在最大仿真时间内未启动成功,334.2052593

@@ -1,0 +1,43 @@
+% Reproduce the Q3 self cold start with the stated current and no heaters.
+codeDir = fileparts(mfilename('fullpath'));
+addpath(codeDir);
+cfg = q3_optimization_config('smoke');
+opt = cfg.simOpt;
+opt.tMax = 180;
+opt.enforceChargeCap = true;
+opt.stopOnSuccess = true;
+opt.plot = false;
+opt.verbose = false;
+
+current = struct('type','linear','initialAcm2',0, ...
+    'rampRateAcm2s',0.005,'plateauAcm2',0.3);
+[~,currentCheck] = q2_current_strategy([0 30 60 90],current);
+assert(max(abs(currentCheck-[0 0.15 0.3 0.3])) < 1e-12);
+
+[result,model] = pemfc_stack5_simulate_q3( ...
+    'coheat',zeros(1,5),0,opt);
+assert(all(result.auxiliaryEnergyJCell == 0));
+assert(result.totalAuxiliaryEnergyJ == 0);
+
+fprintf('success=%d, stopTime=%.6f s, reason=%s\n', ...
+    result.success,result.stopTimeS,result.stopReason);
+fprintf('current=%.6f A/cm2, charge=%.6f C/cm2, minimumVoltage=%.6f V\n', ...
+    result.currentDensityAcm2(end),result.chargeUsedCcm2, ...
+    result.minimumCellVoltageV);
+fprintf('cellTemperatureC=%s\n',mat2str(result.TavgC(end,:),6));
+fprintf('cellVoltageV=%s\n',mat2str(result.Vcell(end,:),6));
+fprintf('cellMaxIceVolumeFraction=%s\n', ...
+    mat2str(result.maxIceVolumeFractionCell(end,:),6));
+
+outDir = fullfile(codeDir,'results');
+if ~exist(outDir,'dir'), mkdir(outDir); end
+save(fullfile(outDir,'q3_no_heater_specified_current.mat'), ...
+    'result','model','opt','current','currentCheck','-v7.3');
+summary = table(result.success,result.stopTimeS, ...
+    result.currentDensityAcm2(end),result.chargeUsedCcm2, ...
+    result.minimumCellVoltageV,result.maximumIceVolumeFraction, ...
+    result.totalAuxiliaryEnergyJ,string(result.stopReason), ...
+    'VariableNames',{'success','stopTimeS','currentAcm2', ...
+    'chargeCcm2','minimumCellVoltageV','maximumIceVolumeFraction', ...
+    'auxiliaryEnergyJ','stopReason'});
+writetable(summary,fullfile(outDir,'q3_no_heater_specified_current.csv'));

@@ -1,0 +1,26 @@
+function test_q3_optimization_contract()
+% Fast contract tests for switching, scoring, and six-variable bounds.
+
+    opt = struct('initialTemperatureC',-30,'ambientTemperatureC',-30, ...
+        'nCellLayer',[1 1 1 1 1],'tMax',0.2,'outputStep',0.05, ...
+        'MaxStep',0.01,'RelTol',1e-5,'AbsTol',1e-9, ...
+        'plot',false,'verbose',false,'useJacobianPattern',true, ...
+        'gammaIce',3.5,'kFreeze',0.4);
+    r = pemfc_stack5_simulate_q3('preheat',ones(1,5),0.1,opt);
+    assert(all(r.currentDensityAcm2 == 0), ...
+        'Pure preheating must have zero current.');
+    assert(abs(r.stopTimeS-0.1) < 1e-8, ...
+        'Pure preheating must stop when heating ends.');
+    assert(~isfield(r,'postloadPass120'), ...
+        'Unspecified postheating load checks must be absent.');
+    assert(abs(r.actualHeatingTimeS-0.1) < 1e-8);
+
+    a = struct('status','success','energyJ',100, ...
+        'violation',0,'safetyMargin',0.1,'successTimeS',50);
+    b = a; b.energyJ = 120;
+    assert(q3_compare_candidates(a,b));
+    assert(~q3_compare_candidates(b,a));
+    b.status = 'infeasible'; b.energyJ = 1;
+    assert(q3_compare_candidates(a,b));
+    fprintf('test_q3_optimization_contract: passed\n');
+end

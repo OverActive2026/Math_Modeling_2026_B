@@ -1,0 +1,19 @@
+Budget search 7 long_duration_budget_gap q=[0.5 0.5 0.5 0.5 0.5] th=60.37443376
+Budget search 7: physical_infeasible E=3773.402110 t=NaN
+Budget search 8 long_duration_budget_gap q=[0.4 0.4 0.4 0.4 0.4] th=75.46804221
+Budget search 8: physical_infeasible E=3343.700535 t=NaN
+Targeted 16 adaptive_cell5_direction1 q=[1 1 1 1 0.997588043] th=40.00000000
+Targeted 16: success E=3779.331935 t=30.249247 accepted=0
+Strict verification 1/3: preheat
+Reused unchanged completed strict verification.
+Strict verification 2/3: coheat
+Reused unchanged completed strict verification.
+Strict verification 3/3: coheat
+Reused unchanged completed strict verification.
+      mode       q1    q2    q3    q4      q5       thRequestedS    thUsedS     E1J       E2J       E3J       E4J       E5J      ETotalJ    startupTimeS    minimumVoltageV    maximumIceVolumeFraction    endCellMaxIce    centerCellMaxIce    chargeCcm2    success            resultStatus         
+    _________    __    __    __    __    _______    ____________    _______    ______    ______    ______    ______    ______    _______    ____________    _______________    ________________________    _____________    ________________    __________    _______    _____________________________
+
+    "preheat"    1     1     1     1           1       33.516       33.516     837.91    837.91    837.91    837.91    837.91    4189.5        33.516             1.225                0.011603              0.011603          0.0057254               0       true      "best_verified_finite_search"
+    "coheat"     1     1     1     1     0.99559       30.254       30.254     756.35    756.35    756.35    756.35    753.01    3778.4        30.254           0.63083                 0.11967               0.11967            0.03304          2.2882       true      "best_verified_finite_search"
+
+Table 4 exported: G:\2026huwei-B题\Code_Q3\Code_Q3\results\表4_辅助冷启动优化结果

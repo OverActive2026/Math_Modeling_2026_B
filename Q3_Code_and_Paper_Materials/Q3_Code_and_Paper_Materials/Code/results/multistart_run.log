@@ -1,0 +1,102 @@
+Multi-start: 24 saved records, 13 feasible; two populations of 8.
+Starting population 1, target 2 DE generations.
+Starting parallel pool (parpool) using the 'Processes' profile ...
+Connected to parallel pool with 2 workers.
+Joint DE eval 1 gen 0 q=[1 1 1 1 0.9956] th=40.0000: success E=3778.402 t=30.254
+Joint DE eval 2 gen 0 q=[1 0.5975 0.8505 0.5975 1] th=52.8860: success E=4008.131 t=39.631
+Joint DE eval 3 gen 0 q=[1 1 0.87 1 1] th=38.2310: success E=3809.335 t=31.288
+Joint DE eval 4 gen 0 q=[1 1 1 0.9955 0.9978] th=40.0000: success E=3778.745 t=30.271
+Joint DE eval 5 gen 0 q=[0.998 1 1 1 0.9956] th=40.0000: success E=3780.832 t=30.285
+Joint DE eval 6 gen 0 q=[1 1 1 1 0.9936] th=40.0000: success E=3780.806 t=30.285
+Joint DE eval 7 gen 0 q=[1 0.998 1 1 0.9956] th=40.0000: success E=3779.744 t=30.277
+Joint DE eval 8 gen 0 q=[1 1 1 0.998 0.9956] th=40.0000: success E=3779.730 t=30.277
+警告: 在 t=5.151033e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 9 gen 1 q=[1 1 1 1 0.9922] th=40.0000: success E=3782.530 t=30.308
+Joint DE eval 10 gen 1 q=[1 1 1 0.998 0.9969] th=40.0000: success E=3778.698 t=30.261
+警告: 在 t=5.186308e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 11 gen 1 q=[0.9987 1 0.8505 1 1] th=52.8860: success E=3815.260 t=31.471
+Joint DE eval 12 gen 1 q=[1 0.7364 0.9873 0.7384 0.9978] th=49.5257: success E=3917.274 t=35.134
+警告: 在 t=5.157789e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 13 gen 1 q=[1 1 1 0.9955 0.9991] th=40.0000: success E=3779.347 t=30.268
+Joint DE eval 14 gen 1 q=[1 1 0.87 1 1] th=38.2310: success E=3809.335 t=31.288
+Joint DE eval 15 gen 1 q=[1 0.5975 0.935 0.5975 0.9971] th=40.0000: success E=3991.668 t=38.687
+Joint DE eval 16 gen 1 q=[1 0.5962 0.8505 0.6004 0.9986] th=52.8860: success E=4008.830 t=39.635
+Joint DE eval 17 gen 2 q=[1 1 1 0.9939 1] th=40.0000: success E=3779.521 t=30.273
+Joint DE eval 18 gen 2 q=[1 1 0.9155 0.9968 0.9969] th=38.8502: success E=3797.244 t=30.940
+Joint DE eval 19 gen 2 q=[1 1 1 0.9971 0.9955] th=40.0000: success E=3780.401 t=30.288
+Joint DE eval 20 gen 2 q=[1 1 1 0.9955 0.9934] th=40.0000: success E=3783.978 t=30.339
+Joint DE eval 21 gen 2 q=[1 0.998 1 0.9971 0.9942] th=41.1498: success E=3781.758 t=30.319
+Joint DE eval 22 gen 2 q=[1 1 1 0.9951 0.9992] th=40.0000: success E=3779.316 t=30.269
+Joint DE eval 23 gen 2 q=[1 1 1 0.9955 1] th=38.8502: success E=3779.771 t=30.265
+Joint DE eval 24 gen 2 q=[1 1 1 0.998 0.9922] th=40.0000: success E=3783.859 t=30.331
+Starting population 2, target 2 DE generations.
+Joint DE eval 1 gen 0 q=[1 1 1 1 0.9956] th=40.0000: success E=3778.402 t=30.254
+Joint DE eval 2 gen 0 q=[1 0.5975 0.8505 0.5975 1] th=52.8860: success E=4008.131 t=39.631
+Joint DE eval 3 gen 0 q=[1 1 0.87 1 1] th=38.2310: success E=3809.335 t=31.288
+Joint DE eval 4 gen 0 q=[1 1 1 0.9955 0.9978] th=40.0000: success E=3778.745 t=30.271
+Joint DE eval 5 gen 0 q=[0.4 0.4 0.4 0.4 0.4] th=75.4680: physical_infeasible E=3343.701 t=NaN
+Joint DE eval 6 gen 0 q=[1 0.3 0 0.3 1] th=55.0000: physical_infeasible E=3575.000 t=NaN
+Joint DE eval 7 gen 0 q=[0.6 0.6 0.6 0.6 0.6] th=50.3120: physical_infeasible E=3773.402 t=NaN
+Joint DE eval 8 gen 0 q=[1 0.548 0.2455 0.548 1] th=42.1252: physical_infeasible E=3519.035 t=NaN
+警告: 在 t=5.229650e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 9 gen 1 q=[0.4 0.6616 0.4972 0.6587 0.3986] th=67.0922: success E=4097.915 t=62.658
+Joint DE eval 10 gen 1 q=[1 1 0.8996 0.5975 1] th=18.3272: physical_infeasible E=2060.466 t=NaN
+警告: 在 t=6.797521e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 11 gen 1 q=[1 0.8913 1 0.8884 1] th=51.5046: success E=3836.483 t=32.107
+Joint DE eval 12 gen 1 q=[1 1 1 0.8575 1] th=45.0333: success E=3868.687 t=31.857
+Joint DE eval 13 gen 1 q=[1 0.8913 1 0.4 0.9971] th=51.5046: success E=4166.557 t=38.863
+Joint DE eval 14 gen 1 q=[1 1 1 1 1] th=31.5282: success E=3780.461 t=30.244
+Joint DE eval 15 gen 1 q=[1 1 1 1 0.9949] th=38.6186: success E=3779.198 t=30.264
+Joint DE eval 16 gen 1 q=[0.14 0.14 0.14 0.14 0.1429] th=82.1709: physical_infeasible E=1130.377 t=NaN
+Joint DE eval 17 gen 2 q=[1 1 0.9155 1 0.9968] th=29.9908: physical_infeasible E=3683.088 t=NaN
+Joint DE eval 18 gen 2 q=[1 0.5975 1 0.6055 0.9959] th=48.6278: success E=3980.634 t=37.921
+警告: 在 t=6.789571e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。
+> 位置：<a href="matlab:matlab.internal.language.introspective.errorDocCallback('ode15s', 'G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m', 630)" style="font-weight:bold">ode15s</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\funfun\ode15s.m',630,0)">第 630 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('pemfc_stack5_simulate_q3', 'G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m', 368)" style="font-weight:bold">pemfc_stack5_simulate_q3</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\pemfc_stack5_simulate_q3.m',368,0)">第 368 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_evaluate_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m', 39)" style="font-weight:bold">q3_evaluate_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_evaluate_energy6.m',39,0)">第 39 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_cached_energy6', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m', 45)" style="font-weight:bold">q3_cached_energy6</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_cached_energy6.m',45,0)">第 45 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('q3_joint_de_energy>evaluate_one', 'G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m', 204)" style="font-weight:bold">q3_joint_de_energy>evaluate_one</a> (<a href="matlab: opentoline('G:\2026huwei-B题\Code_Q3\Code_Q3\q3_joint_de_energy.m',204,0)">第 204 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel_function>make_general_channel/channel_general', 'G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m', 837)" style="font-weight:bold">parallel_function>make_general_channel/channel_general</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\matlab\lang\parallel_function.m',837,0)">第 837 行</a>)
+位置: <a href="matlab:matlab.internal.language.introspective.errorDocCallback('parallel.internal.parfor.cppRemoteParallelFunction', 'G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m', 53)" style="font-weight:bold">parallel.internal.parfor.cppRemoteParallelFunction</a> (<a href="matlab: opentoline('G:\MATLAB\R2023b\toolbox\parallel\cluster\+parallel\+internal\+parfor\cppRemoteParallelFunction.m',53,0)">第 53 行</a>)
+Joint DE eval 19 gen 2 q=[1 1 1 0.9955 1] th=39.1021: success E=3779.771 t=30.265
+Joint DE eval 20 gen 2 q=[1 1 1 1 0.9921] th=44.1253: success E=3782.646 t=30.309
+Joint DE eval 21 gen 2 q=[1 1 1 1 0.9971] th=32.6780: success E=3779.119 t=30.250
+Joint DE eval 22 gen 2 q=[1 1 1 0.9955 1] th=41.1498: success E=3779.771 t=30.265
+Joint DE eval 23 gen 2 q=[1 0.8096 0.2582 0.8096 1] th=32.5995: physical_infeasible E=3160.053 t=NaN
+Joint DE eval 24 gen 2 q=[1 0.5268 0.8505 0.548 0.9981] th=42.1252: success E=4039.703 t=41.185
+Parallel pool using the 'Processes' profile is shutting down.

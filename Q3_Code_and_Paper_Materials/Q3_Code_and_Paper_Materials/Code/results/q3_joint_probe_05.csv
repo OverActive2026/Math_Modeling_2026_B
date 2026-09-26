@@ -1,0 +1,2 @@
+index,q1,q2,q3,q4,q5,th,status,energyJ,startupTimeS,minimumVoltageV,maxIce,chargeCcm2,elapsedS,attempts,reason
+5,1,1,1,1,1,30.2237662556899,physical_infeasible,3777.97078196124,NaN,0.299999999999961,0.395338626851858,12.0481886110421,313.7548219,1,单片电压下降到0.30 V

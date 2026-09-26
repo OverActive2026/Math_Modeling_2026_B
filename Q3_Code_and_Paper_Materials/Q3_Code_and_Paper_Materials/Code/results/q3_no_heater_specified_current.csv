@@ -1,0 +1,2 @@
+success,stopTimeS,currentAcm2,chargeCcm2,minimumCellVoltageV,maximumIceVolumeFraction,auxiliaryEnergyJ,stopReason
+0,61.9072702547968,0.3,9.57224545683917,0.299999999999991,0.380818982464373,0,单片电压下降到0.30 V

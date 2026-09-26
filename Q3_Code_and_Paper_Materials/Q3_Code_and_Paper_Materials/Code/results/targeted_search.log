@@ -1,0 +1,27 @@
+test_q3_energy_retry passed
+Targeted 1 retry_unresolved_end5 q=[1 1 1 1 0.995588043] th=40.00000000
+Targeted 1: success E=3778.402110 t=30.253913 accepted=1
+Targeted 2 joint_end_margin q=[1 1 1 0.99548791 0.997794022] th=40.00000000
+Targeted 2: success E=3778.745304 t=30.270634 accepted=0
+Targeted 3 incumbent_early_shutoff q=[1 1 1 1 0.995588043] th=30.24391267
+Targeted 3: physical_infeasible E=3777.153213 t=NaN accepted=0
+Targeted 4 sparse_long_heating q=[1 0.3 0 0.3 1] th=55.00000000
+Targeted 4: physical_infeasible E=3575.000000 t=NaN accepted=0
+Targeted 5 uniform_low_power_long_heating q=[0.5 0.5 0.5 0.5 0.5] th=60.00000000
+Targeted 5: physical_infeasible E=3750.000000 t=NaN accepted=0
+Targeted 6 preheat_center_reduction q=[1 1 0.9965 1 1] th=45.00000000
+Targeted 6: success E=5621.062500 t=45.000000 accepted=0
+Targeted 7 adaptive_cell1_direction-1 q=[0.998 1 1 1 0.995588043] th=40.00000000
+Targeted 7: success E=3780.831865 t=30.285493 accepted=0
+Targeted 8 adaptive_cell2_direction-1 q=[1 0.998 1 1 0.995588043] th=40.00000000
+[警告: 在 t=5.721163e+00 处失败。在时间 t 处，步长必须降至所允许的最小值(1.421085e-14)以下，才能达到积分容差要求。] 
+[> 位置：ode15s (第 630 行)
+位置: pemfc_stack5_simulate_q3 (第 368 行)
+位置: q3_evaluate_energy6 (第 39 行)
+位置: q3_cached_energy6 (第 45 行)
+位置: q3_continue_energy_search (第 45 行)] 
+Targeted 8: success E=3779.743800 t=30.276777 accepted=0
+Targeted 9 adaptive_cell3_direction-1 q=[1 1 0.998 1 0.995588043] th=40.00000000
+Targeted 9: success E=3778.838694 t=30.269527 accepted=0
+Targeted 10 adaptive_cell4_direction-1 q=[1 1 1 0.998 0.995588043] th=40.00000000
+Targeted 10: success E=3779.729505 t=30.276663 accepted=0

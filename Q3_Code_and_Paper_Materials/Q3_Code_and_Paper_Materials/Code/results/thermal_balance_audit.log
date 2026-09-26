@@ -1,0 +1,14 @@
+                                q: [1 1 1 1 0.9956]
+                     startupTimeS: 30.2539
+                     temperatureC: [0.0100 14.4777 19.2411 14.4667 0.0100]
+    heaterOffTemperatureRateKperS: [-1.5187 -2.4482 -2.3983 -2.4419 -1.5066]
+             endPlateTemperatureC: [-18.8581 -18.8739]
+           endCellToEndPlateHeatW: [52.0295 52.0729]
+               intercellHeatFlowW: [-32.1363 -10.5805 10.6050 32.1119]
+                    reactionHeatW: [2.6420 2.6185 2.6337 2.6181 2.7356]
+                       phaseHeatW: [-0.2546 -2.7985e-08 -1.9755e-09 -1.1057e-07 -0.1406]
+             cellHeatStorageRateW: [-17.5058 -18.9372 -18.5519 -18.8888 -17.3661]
+         endPlateHeatStorageRateW: [50.9299 50.9750]
+                externalHeatLossW: [1.0995 1.0980]
+        stackHeatBalanceResidualW: -2.2204e-15
+
